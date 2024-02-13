@@ -1,0 +1,17 @@
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\bin\Debug\net6.0\BattleBlade!SteelLegacy.exe
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\bin\Debug\net6.0\BattleBlade!SteelLegacy.deps.json
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\bin\Debug\net6.0\BattleBlade!SteelLegacy.runtimeconfig.json
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\bin\Debug\net6.0\BattleBlade!SteelLegacy.dll
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\bin\Debug\net6.0\BattleBlade!SteelLegacy.pdb
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\obj\Debug\net6.0\BattleBlade!SteelLegacy.csproj.AssemblyReference.cache
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\obj\Debug\net6.0\BattleBlade!SteelLegacy.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\obj\Debug\net6.0\BattleBlade!SteelLegacy.AssemblyInfoInputs.cache
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\obj\Debug\net6.0\BattleBlade!SteelLegacy.AssemblyInfo.cs
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\obj\Debug\net6.0\BattleBlade!SteelLegacy.csproj.CoreCompileInputs.cache
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\obj\Debug\net6.0\BattleBlade!SteelLegacy.dll
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\obj\Debug\net6.0\refint\BattleBlade!SteelLegacy.dll
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\obj\Debug\net6.0\BattleBlade!SteelLegacy.pdb
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\obj\Debug\net6.0\BattleBlade!SteelLegacy.genruntimeconfig.cache
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\obj\Debug\net6.0\ref\BattleBlade!SteelLegacy.dll
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\bin\Debug\net6.0\Newtonsoft.Json.dll
+C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\obj\Debug\net6.0\BattleBlade!SteelLegacy.csproj.CopyComplete

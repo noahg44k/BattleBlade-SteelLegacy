@@ -1,0 +1,16 @@
+{
+  "weapons": [
+    {
+      "name": "Sword",
+      "dmg": 8,
+      "heal": -3.5,
+      "stage": 1,
+      "requiredSkills": [ "Strength" ],
+      "requiredSkillLevels": [ 5 ],
+      "scalingSkills": [ "Strength" ],
+      "scalingSkillAmounts": [ 5 ],
+      "energyConsumption": 1,
+      "discoverChance": 1
+    }
+  ]
+}
