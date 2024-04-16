@@ -1,0 +1,3 @@
+TO OPEN PROJECT GO TO BattleBlade-SteelLegacy-master\BattleBlade!SteelLegacy\bin\Debug\net6.0\BattleBlade!SteelLegacy
+
+if file does not run you must download Newtonsoft v13.0.3.2
