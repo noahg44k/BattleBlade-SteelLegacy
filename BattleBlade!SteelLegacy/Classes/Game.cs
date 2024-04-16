@@ -265,35 +265,27 @@ namespace BattleBlade_SteelLegacy.Classes
         {
             switch (option)
             {
-                case "explore":
-                case "1":
+                case string a when a.Contains("explore") || option == "1":
                     player.am.explore();
                     break;
 
-                case "rest":
-                case "2":
+                case string a when a.Contains("rest") || option == "2":
                     player.am.rest();
                     break;
 
-                case "pray":
-                case "3":
+                case string a when a.Contains("pray") || option == "3":
                     player.am.pray();
                     break;
 
-                case "use":
-                case "equip":
-                case "item":
-                case "4":
+                case string a when a.Contains("use") || a.Contains("equip") || a.Contains("item") || option == "4":
                     player.am.useItem();
                     break;
 
-                case "player":
-                case "5":
+                case string a when a.Contains("player") || a.Contains("inspect") || option == "5":
                     player.pm.printStats();
                     break;
 
-                case "quit":
-                case "6":
+                case string a when a.Contains("quit") || option == "6":
                     ProcessQuitOption();
                     break;
 

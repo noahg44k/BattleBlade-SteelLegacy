@@ -65,22 +65,39 @@ namespace BattleBlade_SteelLegacy.Classes
                 string choice = Console.ReadLine().ToLower();
 
                 if (choice.Contains("1") || choice.Contains("str"))
+                {
                     increaseStatWithConfirmation(Stat.StatName.Strength);
+                    return;
+                }
 
                 else if (choice.Contains("2") || choice.Contains("luck"))
+                {
                     DisplayAndContinue("Cannot upgrade luck. Pray to your god to increase luck.");
+                }
 
                 else if (choice.Contains("3") || choice.Contains("vig"))
+                {
                     increaseStatWithConfirmation(Stat.StatName.Vigor);
+                    return;
+                }    
 
                 else if (choice.Contains("4") || choice.Contains("spee"))
+                {
                     increaseStatWithConfirmation(Stat.StatName.Speed);
+                    return;
+                }
 
                 else if (choice.Contains("5") || choice.Contains("inte"))
+                {
                     increaseStatWithConfirmation(Stat.StatName.Intelligence);
+                    return;
+                }    
 
                 else if (choice.Contains("6") || choice.Contains("prec"))
+                {
                     increaseStatWithConfirmation(Stat.StatName.Precision);
+                    return;
+                }
             }
         }
 
