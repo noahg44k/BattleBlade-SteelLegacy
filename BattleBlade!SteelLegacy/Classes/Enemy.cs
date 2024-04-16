@@ -170,7 +170,7 @@ namespace BattleBlade_SteelLegacy.Classes
             }
             else if (num == 3)
             {
-                Text.Color($"Fuck! A {currentEnemy.name}!", Text.TC.C);
+                Text.Color($"AAAAAA! A {currentEnemy.name}!", Text.TC.C);
                 Text.Continue();
             }
             else if (num == 4)

@@ -114,11 +114,9 @@ namespace BattleBlade_SteelLegacy.Classes
                 Console.WriteLine($"So, {player.name}...");
                 Console.WriteLine("What class would you like to be?\n");
 
-                int num = 1;
                 foreach (Role role in Role.roles)
                 {
-                    PrintRoleInfo(role, num);
-                    num++;
+                    PrintRoleInfo(role);
                 }
 
                 string choice = Console.ReadLine();
@@ -154,10 +152,10 @@ namespace BattleBlade_SteelLegacy.Classes
             }
         }
 
-        private static void PrintRoleInfo(Role role, int num)
+        private static void PrintRoleInfo(Role role)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine($"{num}. {role.roleName}");
+            Console.WriteLine($"{role.roleName}");
             Console.ForegroundColor = ConsoleColor.DarkCyan;
             Console.WriteLine(role.desc);
             Console.ForegroundColor = ConsoleColor.DarkGray;

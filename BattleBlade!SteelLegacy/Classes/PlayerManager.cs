@@ -128,7 +128,7 @@ namespace BattleBlade_SteelLegacy.Classes
                 }
                 else if (confirm.Contains("n"))
                 {
-                    break;
+                    
                 }
                 else
                 {
