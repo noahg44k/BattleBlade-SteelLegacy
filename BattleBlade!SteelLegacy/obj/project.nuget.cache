@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "G32pzvB7qyPvgmAqBw1vvavlnmmV3uQXJqoRvRFMAR2ipzT++d5y7bLWf0AcAolZwOmgOiBE/9G0nXZqFHM1TA==",
+  "dgSpecHash": "vNvg8roZ0uWM/AhvPTSisPeBK3Ajo3xN2w1uYuoJmlgiRuet2a/vo34HPxyC38RyGfvISahOy+3cnEGob75Yww==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Noah\\Desktop\\Folders\\Coding\\CS_Projects\\BattleBlade!SteelLegacy\\BattleBlade!SteelLegacy\\BattleBlade!SteelLegacy.csproj",
+  "projectFilePath": "C:\\Users\\otis2\\Downloads\\BattleBlade-SteelLegacy-master(1)\\BattleBlade-SteelLegacy-master\\BattleBlade!SteelLegacy\\BattleBlade!SteelLegacy.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Noah\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+    "C:\\Users\\otis2\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
   ],
   "logs": []
 }

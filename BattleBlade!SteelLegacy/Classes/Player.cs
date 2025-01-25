@@ -26,6 +26,7 @@ namespace BattleBlade_SteelLegacy.Classes
         public int luckWalkCounter = 0;
         public int lvlXpCap = 25;
         public int faith = 0;
+        public int favor = 0;
         public PlayerManager pm = new PlayerManager();
         public ActionManager am = new ActionManager();
 
@@ -42,6 +43,7 @@ namespace BattleBlade_SteelLegacy.Classes
             lvl = 1;
             distWalked = 0;
             faith = 0;
+            favor = 0;
             Clock.resetClock();
             inventory.Clear();
             inventory.Add(Item.getItem("fist"));

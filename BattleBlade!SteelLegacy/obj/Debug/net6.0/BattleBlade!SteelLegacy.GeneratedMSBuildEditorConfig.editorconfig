@@ -8,4 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = BattleBlade_SteelLegacy
-build_property.ProjectDir = C:\Users\Noah\Desktop\Folders\Coding\CS_Projects\BattleBlade!SteelLegacy\BattleBlade!SteelLegacy\
+build_property.ProjectDir = C:\Users\otis2\Downloads\BattleBlade-SteelLegacy-master(1)\BattleBlade-SteelLegacy-master\BattleBlade!SteelLegacy\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 

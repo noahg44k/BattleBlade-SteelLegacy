@@ -16,9 +16,7 @@ namespace BattleBlade_SteelLegacy.Classes
             Item items = new Item();
             items.buildItemDex();
             Enemy.currentEnemy.buildEnemyDex();
-            map.setStage(Map.Stage.first);
             map.checkStage();
-            Graphics.PrintTitleCard();
             gameLoop();
         }
         public static void gameLoop()

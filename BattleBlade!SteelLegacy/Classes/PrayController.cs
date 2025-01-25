@@ -18,10 +18,11 @@ namespace BattleBlade_SteelLegacy.Classes
             {
                 Graphics.PrintTitleCard();
                 Text.SetTextColor(Text.TC.Y);
-                Console.WriteLine("PRAY TO YOUR GOD: " + Game.player.role.god);
+                Console.WriteLine("PRAY TO YOUR GOD: " + p.role.god);
                 Console.WriteLine("\n\n\n\n\n\n\n\n\n");
                 Text.SetTextColor(Text.TC.g);
-                Console.WriteLine("Faith: " + Game.player.faith);
+                Console.WriteLine("Faith: " + p.faith);
+                Console.WriteLine("Favor: " + p.favor);
                 Text.SetTextColor(Text.TC.Y);
                 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 Console.WriteLine("What would you like to pray for?");
@@ -63,6 +64,7 @@ namespace BattleBlade_SteelLegacy.Classes
         private void favor(Player p) // FAVOR IS THE MAGIC ABILITY TO CAST HEALING SPELLS
         {
             string sacrificeItems = "";
+            Item selectedItem = null;
             while (true)
             {
                 Graphics.PrintTitleCard();
@@ -114,9 +116,29 @@ namespace BattleBlade_SteelLegacy.Classes
                 Console.WriteLine("\n\n\n");
                 Text.Color(title, Text.TC.Y);
                 Text.Color(sacrificeItems, Text.TC.E);
+                Text.Instructions("Press Enter to go back");
 
+                string input = Console.ReadLine().ToLower();
+                foreach(Item item in sacrificeItemsList)
+                {
+                    if(item.name.ToLower() == input)
+                    {
+                        selectedItem = item;
+                    }
+                }
+                if(selectedItem != null)
+                {
+                    p.inventory.Remove(selectedItem);
+                    p.pm.addFavor(p);
+                    return;
+                }
+                if(input == String.Empty)
+                {
+                    return;
+                }
+                Text.Error("Invalid input!");
+                Text.Error(input + " is not a valid item!");
                 Text.Continue();
-                return;
             }
         }
         private void luck(Player p) // LUCK IS THE CHANCE TO ENCOUNTER ITEMS ** YET TO BE IMPLEMENTED
@@ -152,7 +174,8 @@ namespace BattleBlade_SteelLegacy.Classes
         }
         private void weaponImbuement(Player p) // WEAPON IMBUEMENT WILL ADD SPECIAL MAGICAL ABILITIES TO WEAPONS
         {
-
+            Text.Color("This doesn't work yet! :D", Text.TC.C);
+            Text.Continue();
         }
     }
 }

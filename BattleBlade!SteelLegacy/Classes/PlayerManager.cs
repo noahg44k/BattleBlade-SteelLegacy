@@ -53,6 +53,19 @@ namespace BattleBlade_SteelLegacy.Classes
             }
         }
 
+        /// <summary>
+        /// Increase the player's favor by 1
+        /// 
+        /// Used in the Pray Controller class
+        /// </summary>
+        /// <param name="p">Player</param>
+        public void addFavor(Player p)
+        {
+            p.favor++;
+            Text.Timed("Your favor with " + p.role.god + " has increased by one!", 10, Text.TC.M);
+            Text.Continue();
+        }
+
         public void increaseStat()
         {
             while (true)

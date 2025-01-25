@@ -208,7 +208,7 @@ namespace BattleBlade_SteelLegacy.Classes
             newItem.ID = ++prevID;
             newItem.wepDmg = dmg;
             newItem.heal = heal;
-            newItem.use = Use.Wear;
+            newItem.use = Use.Heal;
             newItem.equipped = false;
             newItem.stage = stage;
             newItem.energyConsumption = energyConsumption;
@@ -341,5 +341,4 @@ namespace BattleBlade_SteelLegacy.Classes
             newItem("Wyrm Meat", 4000, 5, 10);//LEGENDARY
         }
     }
-
 }

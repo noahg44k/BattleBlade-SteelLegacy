@@ -145,6 +145,7 @@ namespace BattleBlade_SteelLegacy.Classes
             {
                 Console.WriteLine("You encountered a " + item.name + ", but you have the maximum amount of that item already.");
             }
+            SaveData.Save();
         }
         public void pray()
         {
@@ -216,7 +217,7 @@ namespace BattleBlade_SteelLegacy.Classes
         public void explore()
         {
             Random rand = new Random();
-            int num = rand.Next(0, 6);
+            int num = rand.Next(0, 7);
             int previousDist = 0;
             int walkTime;
 
@@ -236,8 +237,8 @@ namespace BattleBlade_SteelLegacy.Classes
                     break;
                 case 1: // LONG WALK AND REST
                     Text.SetTextColor();
-                    int dist = rand.Next(4, 15);
-                    Console.WriteLine("After a long voyage of {0}", dist + " miles, you lay on the floor and take a rest.");
+                    int dist = rand.Next(5, 9);
+                    Console.WriteLine("After a long voyage of {0}", dist + " miles, you can no longer continue. You lie on the floor and rest.");
                     Game.player.distWalked += dist;
 
                     if (Game.player.distWalked >= previousDist + 8)
@@ -267,10 +268,10 @@ namespace BattleBlade_SteelLegacy.Classes
                     Enemy.currentEnemy.encounterEnemy();
                     Console.ResetColor();
                     break;
-                case 4: // LONG WALK
+                case 4: // SHORT WALK
                     Graphics.PrintTitleCard();
-                    dist = rand.Next(4, 15);
-                    Console.WriteLine("After a long voyage of {0}", dist + " miles, you decide you can continue.");
+                    dist = rand.Next(1, 5);
+                    Console.WriteLine("After a short treck of {0}", dist + " miles, you decide you can continue.");
                     Game.player.distWalked += dist;
 
                     if (Game.player.distWalked >= previousDist + 8)
@@ -286,8 +287,8 @@ namespace BattleBlade_SteelLegacy.Classes
                     break;
                 case 5: // LONG WALK
                     Graphics.PrintTitleCard();
-                    dist = rand.Next(4, 15);
-                    Console.WriteLine("After a long voyage of {0}", dist + " miles, you decide you can continue.");
+                    dist = rand.Next(5, 9);
+                    Console.WriteLine("After a long journey of {0}", dist + " miles, you muster the strength to continue.");
                     Game.player.distWalked += dist;
 
                     if (Game.player.distWalked >= previousDist + 8)
@@ -299,6 +300,17 @@ namespace BattleBlade_SteelLegacy.Classes
                     walkTime = dist * 16;
                     Clock.increaseTime(walkTime);
                     Game.player.luckWalkCounter -= dist;
+                    Text.Continue();
+                    break;
+                case 6: // ENCOUNTER ITEM
+                    Graphics.PrintTitleCard();
+
+                    itemType = rand.Next(0, Game.player.stageItemsAvailable.Count());
+
+                    Console.WriteLine("What luck! You encountered an item!");
+                    Text.Continue();
+
+                    pickUp(Game.player.stageItemsAvailable.ElementAt(itemType));
                     Text.Continue();
                     break;
             }

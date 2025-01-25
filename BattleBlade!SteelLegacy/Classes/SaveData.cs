@@ -27,6 +27,8 @@ namespace BattleBlade_SteelLegacy.Classes
         public float dmg { get; set; }
         public float dmgMod { get; set; }
         public int AR { get; set; }
+        public int favor { get; set; }
+        public int faith { get; set; }
         public long xp { get; set; }
         public int lvl { get; set; }
         public int distWalked { get; set; }
@@ -34,6 +36,7 @@ namespace BattleBlade_SteelLegacy.Classes
         public int clockDay { get; set; }
         public int clockHour { get; set; }
         public int clockMinute { get; set; }
+        public Map.Stage stage { get; set; }
 
     }
 
@@ -85,6 +88,8 @@ namespace BattleBlade_SteelLegacy.Classes
             data.dmg = Game.player.dmg;
             data.dmgMod = Game.player.dmgMod;
             data.AR = Game.player.AR;
+            data.faith = Game.player.faith;
+            data.favor = Game.player.favor;
             data.xp = Game.player.xp;
             data.lvl = Game.player.lvl;
             data.distWalked = Game.player.distWalked;
@@ -92,7 +97,8 @@ namespace BattleBlade_SteelLegacy.Classes
             data.clockDay = Clock.day;
             data.clockHour = Clock.hour;
             data.clockMinute = Clock.minute;
-            
+            data.stage = Game.map.currentStage;
+
 
             string fileName = "PlayerData.json";
             string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,fileName);
@@ -128,6 +134,8 @@ namespace BattleBlade_SteelLegacy.Classes
             data.dmg = Game.player.dmg;
             data.dmgMod = Game.player.dmgMod;
             data.AR = Game.player.AR;
+            data.faith = Game.player.faith;
+            data.favor = Game.player.favor;
             data.xp = Game.player.xp;
             data.lvl = Game.player.lvl;
             data.distWalked = Game.player.distWalked;
@@ -135,6 +143,7 @@ namespace BattleBlade_SteelLegacy.Classes
             data.clockDay = Clock.day;
             data.clockHour = Clock.hour;
             data.clockMinute = Clock.minute;
+            data.stage = Game.map.currentStage;
 
             string fileName = "PlayerData.json";
             string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
@@ -188,11 +197,14 @@ namespace BattleBlade_SteelLegacy.Classes
                 Game.player.health = data.health;
                 Game.player.dmg = data.dmg;
                 Game.player.dmgMod = data.dmgMod;
+                Game.player.favor = data.favor;
+                Game.player.faith = data.faith;
                 Game.player.AR = data.AR;
                 Game.player.xp = data.xp;
                 Game.player.lvl = data.lvl;
                 Game.player.distWalked = data.distWalked;
                 Game.player.lvlXpCap = data.lvlXpCap;
+                Game.map.setStage(data.stage);
                 Clock.setClock(data.clockDay, data.clockHour, data.clockMinute);
 
                 Text.Color("Loaded player: " + Game.player.name, Text.TC.E);

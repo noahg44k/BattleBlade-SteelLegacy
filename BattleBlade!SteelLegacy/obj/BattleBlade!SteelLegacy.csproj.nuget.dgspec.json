@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Noah\\Desktop\\Folders\\Coding\\CS_Projects\\BattleBlade!SteelLegacy\\BattleBlade!SteelLegacy\\BattleBlade!SteelLegacy.csproj": {}
+    "C:\\Users\\otis2\\Downloads\\BattleBlade-SteelLegacy-master(1)\\BattleBlade-SteelLegacy-master\\BattleBlade!SteelLegacy\\BattleBlade!SteelLegacy.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Noah\\Desktop\\Folders\\Coding\\CS_Projects\\BattleBlade!SteelLegacy\\BattleBlade!SteelLegacy\\BattleBlade!SteelLegacy.csproj": {
+    "C:\\Users\\otis2\\Downloads\\BattleBlade-SteelLegacy-master(1)\\BattleBlade-SteelLegacy-master\\BattleBlade!SteelLegacy\\BattleBlade!SteelLegacy.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Noah\\Desktop\\Folders\\Coding\\CS_Projects\\BattleBlade!SteelLegacy\\BattleBlade!SteelLegacy\\BattleBlade!SteelLegacy.csproj",
+        "projectUniqueName": "C:\\Users\\otis2\\Downloads\\BattleBlade-SteelLegacy-master(1)\\BattleBlade-SteelLegacy-master\\BattleBlade!SteelLegacy\\BattleBlade!SteelLegacy.csproj",
         "projectName": "BattleBlade!SteelLegacy",
-        "projectPath": "C:\\Users\\Noah\\Desktop\\Folders\\Coding\\CS_Projects\\BattleBlade!SteelLegacy\\BattleBlade!SteelLegacy\\BattleBlade!SteelLegacy.csproj",
-        "packagesPath": "C:\\Users\\Noah\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Noah\\Desktop\\Folders\\Coding\\CS_Projects\\BattleBlade!SteelLegacy\\BattleBlade!SteelLegacy\\obj\\",
+        "projectPath": "C:\\Users\\otis2\\Downloads\\BattleBlade-SteelLegacy-master(1)\\BattleBlade-SteelLegacy-master\\BattleBlade!SteelLegacy\\BattleBlade!SteelLegacy.csproj",
+        "packagesPath": "C:\\Users\\otis2\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\otis2\\Downloads\\BattleBlade-SteelLegacy-master(1)\\BattleBlade-SteelLegacy-master\\BattleBlade!SteelLegacy\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Noah\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\otis2\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -38,6 +39,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -65,7 +71,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.200\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204\\RuntimeIdentifierGraph.json"
         }
       }
     }
