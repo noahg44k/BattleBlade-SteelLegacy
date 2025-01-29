@@ -29,9 +29,14 @@ namespace BattleBlade_SteelLegacy.Classes
         }
         public static void Continue()
         {
-            Instructions("Press any key to continue");
+            Instructions("Press any key to continue\n");
+            Text.SetTextColor();
             Console.ReadKey();
         }
+        /// <summary>
+        /// Uses Timed() to write invalid input and an optional string. Also uses Continue()
+        /// </summary>
+        /// <param name="msg">Optional Msg</param>
         public static void InvalidInput(string msg = "")
         {
             //set text color red
@@ -42,12 +47,20 @@ namespace BattleBlade_SteelLegacy.Classes
             }
             Continue();
         }
+        /// <summary>
+        /// Prints text in dark gray
+        /// </summary>
+        /// <param name="text">Msg</param>
         public static void Instructions(string text)
         {
             //set text color dark gray
             SetTextColor(TC.g);
             Console.WriteLine(text);
         }
+        /// <summary>
+        /// Prints text in red
+        /// </summary>
+        /// <param name="text">Msg</param>
         public static void Error(string text, TC color = TC.R)
         {
             SetTextColor(color);
@@ -79,6 +92,11 @@ namespace BattleBlade_SteelLegacy.Classes
             SetTextColor(color);
             Console.WriteLine(text);
         }
+
+        /// <summary>
+        /// Plain WriteLine with no specific color.
+        /// </summary>
+        /// <param name="text"></param>
         public static void Print(string text)
         {
             Console.WriteLine(text);

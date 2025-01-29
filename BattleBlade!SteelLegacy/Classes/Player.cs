@@ -10,10 +10,11 @@ namespace BattleBlade_SteelLegacy.Classes
     public class Player
     {
         public List<Item> inventory = new List<Item>();
-        public Item currentWeapon = new Item();
-        public Item currentArmor = new Item();
+        public Weapon currentWeapon = new Weapon("Fist", 1, 0, 0);
+        public Armor currentArmor = new Armor("Nakey", 0, 0);
         public List<Item> stageItemsAvailable = new List<Item>();
         public Role role = new Role();
+        public Weapon? classDefaultWeapon = null;
         public string name = "";
         public float maxHealth = 75f;
         public float health = 75f;
@@ -25,8 +26,6 @@ namespace BattleBlade_SteelLegacy.Classes
         public int distWalked = 0;
         public int luckWalkCounter = 0;
         public int lvlXpCap = 25;
-        public int faith = 0;
-        public int favor = 0;
         public PlayerManager pm = new PlayerManager();
         public ActionManager am = new ActionManager();
 
@@ -42,13 +41,11 @@ namespace BattleBlade_SteelLegacy.Classes
             lvlXpCap = 25;
             lvl = 1;
             distWalked = 0;
-            faith = 0;
-            favor = 0;
             Clock.resetClock();
             inventory.Clear();
-            inventory.Add(Item.getItem("fist"));
-            currentWeapon = pm.getInvItem("fist");
-            currentArmor = Item.getItem("nakey");
+            inventory.Add(ItemManager.getItem("fist"));
+            currentWeapon = (Weapon)pm.getInvItem("fist");
+            currentArmor = (Armor)ItemManager.getItem("nakey");
         }
     }
 }

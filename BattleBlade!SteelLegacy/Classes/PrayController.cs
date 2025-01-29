@@ -1,9 +1,11 @@
 ﻿using BattleBlade_SteelLegacy.Classes;
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,42 +23,39 @@ namespace BattleBlade_SteelLegacy.Classes
                 Console.WriteLine("PRAY TO YOUR GOD: " + p.role.god);
                 Console.WriteLine("\n\n\n\n\n\n\n\n\n");
                 Text.SetTextColor(Text.TC.g);
-                Console.WriteLine("Faith: " + p.faith);
-                Console.WriteLine("Favor: " + p.favor);
+                Console.WriteLine("Faith: " + p.role.getStat(Stat.StatName.Faith));
+                Console.WriteLine("Favor: " + p.role.getStat(Stat.StatName.Favor));
                 Text.SetTextColor(Text.TC.Y);
                 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 Console.WriteLine("What would you like to pray for?");
-                Console.WriteLine("1. Favor");
-                Console.WriteLine("2. Luck");
-                Console.WriteLine("3. Weapon Imbuement");
-                Console.WriteLine("4. Quit");
-                Text.SetTextColor(Text.TC.g);
-                Console.WriteLine("Praying increases faith, which is used to cast blessings.");
-                Console.WriteLine("");
+                Console.WriteLine("Favor");
+                Console.WriteLine("Luck");
+                Console.WriteLine("Weapon Imbuement");
+                Console.WriteLine("Quit");
+                Text.Color("Praying increases faith, which is used to cast blessings.", Text.TC.g);
 
-                string input = Console.ReadLine().ToLower();
-                int inputValue;
+                string option = Game.GetPlayerInput();
 
-                if (int.TryParse(input, out inputValue))
+                switch (option)
                 {
-                    switch (inputValue)
-                    {
-                        case 1:
-                            favor(p);
-                            break;
-                        case 2:
-                            luck(p);
-                            break;
-                        case 3:
-                            weaponImbuement(p);
-                            break;
-                        case 4:
-                            return;
-                    }
-                }
-                else
-                {
-                    Text.InvalidInput();
+                    case string a when a.Contains("fav") || option == "1":
+                        favor(p);
+                        break;
+
+                    case string a when a.Contains("lu") || option == "2":
+                        luck(p);
+                        break;
+
+                    case string a when a.Contains("wea") || option == "3":
+                        weaponImbuement(p);
+                        break;
+
+                    case string a when a.Contains("quit") || option == "6":
+                        return;
+
+                    default:
+                        Text.InvalidInput();
+                        break;
                 }
             }
         }
@@ -116,9 +115,10 @@ namespace BattleBlade_SteelLegacy.Classes
                 Console.WriteLine("\n\n\n");
                 Text.Color(title, Text.TC.Y);
                 Text.Color(sacrificeItems, Text.TC.E);
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 Text.Instructions("Press Enter to go back");
 
-                string input = Console.ReadLine().ToLower();
+                string input = Game.GetPlayerInput();
                 foreach(Item item in sacrificeItemsList)
                 {
                     if(item.name.ToLower() == input)
@@ -147,7 +147,7 @@ namespace BattleBlade_SteelLegacy.Classes
             {
                 Graphics.PrintTitleCard();
                 Random r = new Random();
-                double luckChance = r.NextDouble() + (Convert.ToDouble(p.faith)) / 50;
+                double luckChance = r.NextDouble() + (Convert.ToDouble(p.role.getStat(Stat.StatName.Faith))) / 50;
                 if (p.luckWalkCounter <= 0)
                 {
                     if (luckChance >= 0.90)

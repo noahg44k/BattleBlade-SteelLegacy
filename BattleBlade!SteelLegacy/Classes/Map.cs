@@ -12,7 +12,6 @@ namespace BattleBlade_SteelLegacy.Classes
     public class Map
     {
         public Stage currentStage = Stage.first;
-
         public enum Stage
         {
             first = 1,
@@ -27,24 +26,20 @@ namespace BattleBlade_SteelLegacy.Classes
         {
             currentStage = newStage;
         }
-
         public void nextStage()
         {
             setStage(getNextStage());
             Text.Color("Congratulations! You progressed to the " + currentStage + " stage!", Text.TC.Y);
             Text.Continue();
         }
-
         public Stage getStage()
         {
             return currentStage;
         }
-
         public Stage getNextStage()
         {
             return getStage() + 1;
         }
-
         public void changeStage()
         {
             while (true)
@@ -52,7 +47,7 @@ namespace BattleBlade_SteelLegacy.Classes
                 Graphics.PrintTitleCard();
                 if (getStage() != Stage.last)
                 {
-                    Text.Color("Would you like to progress to the next stage?", Text.TC.c);
+                    Text.Color($"Would you like to progress to the {currentStage} stage?", Text.TC.c);
                     Text.Instructions("y or n");
                     string choice = Game.GetPlayerInput();
 
@@ -76,7 +71,6 @@ namespace BattleBlade_SteelLegacy.Classes
                 }
             }
         }
-
         public void checkStage()
         {
             switch (Game.player.lvl)
@@ -140,58 +134,58 @@ namespace BattleBlade_SteelLegacy.Classes
             if (currentStage == Stage.first)
             {
                 //SETTING STAGE ENEMIES
-                Enemy.stageEnemies.Clear();
-                Enemy.currentEnemy.AddAllEnemiesInStage(1);
+                EnemyManager.stageEnemies.Clear();
+                EnemyManager.AddAllEnemiesInStage(1);
 
                 //SETTING STAGE ITEMS
                 Game.player.stageItemsAvailable.Clear();
-                Item.AddAllItemsInStage(1);
-                Game.player.stageItemsAvailable.Add(Item.getItem("health potion"));
+                ItemManager.AddAllItemsInStage(1);
+                Game.player.stageItemsAvailable.Add(ItemManager.getItem("health potion"));
             }
             else if (currentStage == Stage.second)
             {
-                Enemy.stageEnemies.Clear();
-                Enemy.currentEnemy.AddAllEnemiesInStage(2);
+                EnemyManager.stageEnemies.Clear();
+                EnemyManager.AddAllEnemiesInStage(2);
 
                 Game.player.stageItemsAvailable.Clear();
-                Item.AddAllItemsInStage(2);
-                Item.AddAllItemsInStage(7);
+                ItemManager.AddAllItemsInStage(2);
+                ItemManager.AddAllItemsInStage(7);
             }
             else if (currentStage == Stage.third)
             {
-                Enemy.stageEnemies.Clear();
-                Enemy.currentEnemy.AddAllEnemiesInStage(3);
+                EnemyManager.stageEnemies.Clear();
+                EnemyManager.AddAllEnemiesInStage(3);
 
                 Game.player.stageItemsAvailable.Clear();
-                Item.AddAllItemsInStage(3);
-                Item.AddAllItemsInStage(7);
+                ItemManager.AddAllItemsInStage(3);
+                ItemManager.AddAllItemsInStage(7);
             }
             else if (currentStage == Stage.fourth)
             {
-                Enemy.stageEnemies.Clear();
-                Enemy.currentEnemy.AddAllEnemiesInStage(4);
+                EnemyManager.stageEnemies.Clear();
+                EnemyManager.AddAllEnemiesInStage(4);
 
                 Game.player.stageItemsAvailable.Clear();
-                Item.AddAllItemsInStage(4);
-                Item.AddAllItemsInStage(7);
+                ItemManager.AddAllItemsInStage(4);
+                ItemManager.AddAllItemsInStage(7);
             }
             else if (currentStage == Stage.fifth)
             {
-                Enemy.stageEnemies.Clear();
-                Enemy.currentEnemy.AddAllEnemiesInStage(5);
+                EnemyManager.stageEnemies.Clear();
+                EnemyManager.AddAllEnemiesInStage(5);
 
                 Game.player.stageItemsAvailable.Clear();
-                Item.AddAllItemsInStage(5);
-                Item.AddAllItemsInStage(7);
+                ItemManager.AddAllItemsInStage(5);
+                ItemManager.AddAllItemsInStage(7);
             }
             else if (currentStage == Stage.last)
             {
-                Enemy.stageEnemies.Clear();
-                Enemy.currentEnemy.AddAllEnemiesInStage(6);
+                EnemyManager.stageEnemies.Clear();
+                EnemyManager.AddAllEnemiesInStage(6);
 
                 Game.player.stageItemsAvailable.Clear();
-                Item.AddAllItemsInStage(6);
-                Item.AddAllItemsInStage(7);
+                ItemManager.AddAllItemsInStage(6);
+                ItemManager.AddAllItemsInStage(7);
             }
         }
     }

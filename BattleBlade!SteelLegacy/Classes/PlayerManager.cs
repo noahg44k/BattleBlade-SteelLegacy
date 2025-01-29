@@ -22,7 +22,6 @@ namespace BattleBlade_SteelLegacy.Classes
             }
             else
             {
-                Text.Color("Could not find item of name " + name, Text.TC.R);
                 return null;
             }
         }
@@ -32,15 +31,14 @@ namespace BattleBlade_SteelLegacy.Classes
             int xpCap = 25;
             int total = 0;
 
-            foreach (Stat stat in Game.player.role.roleStats)
+            foreach (KeyValuePair<Stat.StatName, int> kvp in Game.player.role.roleStats)
             {
-                total += stat.value;
+                total += kvp.Value;
             }
             Game.player.role.roleLevel = total;
             xpCap += 5 * Game.player.role.roleLevel;
             return xpCap;
         }
-
         public void addXP(long newXP)
         {
             Game.player.xp += newXP;
@@ -52,7 +50,6 @@ namespace BattleBlade_SteelLegacy.Classes
                 lvlUp();
             }
         }
-
         /// <summary>
         /// Increase the player's favor by 1
         /// 
@@ -61,7 +58,7 @@ namespace BattleBlade_SteelLegacy.Classes
         /// <param name="p">Player</param>
         public void addFavor(Player p)
         {
-            p.favor++;
+            p.role.raiseStat(Stat.StatName.Faith);
             Text.Timed("Your favor with " + p.role.god + " has increased by one!", 10, Text.TC.M);
             Text.Continue();
         }
@@ -113,18 +110,16 @@ namespace BattleBlade_SteelLegacy.Classes
                 }
             }
         }
-
         private void DisplayStatOptions()
         {
             int num = 1;
-            foreach (Stat stat in Game.player.role.roleStats)
+            foreach (KeyValuePair<Stat.StatName, int> kvp in Game.player.role.roleStats)
             {
-                Text.Color($"{num}. {stat.name}: {stat.value}", Text.TC.g);
+                Text.Color($"{num}. {kvp.Key}: {kvp.Value}", Text.TC.g);
                 num++;
             }
             Text.Print("\n");
         }
-
         private void increaseStatWithConfirmation(Stat.StatName statName)
         {
             while (true)
@@ -163,8 +158,6 @@ namespace BattleBlade_SteelLegacy.Classes
 
         public void lvlUp()
         {
-            Map.Stage beforeStage = Game.map.getStage();
-
             Game.player.lvl++;
             Game.player.lvlXpCap = determineXPCap();
             Game.player.xp -= 200;
@@ -173,12 +166,13 @@ namespace BattleBlade_SteelLegacy.Classes
                 Game.player.xp = 0;
             }
             Graphics.PrintTitleCard();
-            Game.map.checkStage();
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("You leveled up to level " + Game.player.lvl + "!");
+            Text.Color($"You leveled up to level {Game.player.lvl}!", Text.TC.y);
             Text.Continue();
 
             increaseStat();
+
+            Map.Stage beforeStage = Game.map.getStage();
+            Game.map.checkStage();
 
             if (beforeStage != Game.map.getStage())
             {
@@ -189,7 +183,6 @@ namespace BattleBlade_SteelLegacy.Classes
             Text.SetTextColor();
             Game.player.health = Game.player.maxHealth;
         }
-
         public void takeDamage(float damage)
         {
             Console.ForegroundColor = ConsoleColor.Red;
@@ -213,7 +206,6 @@ namespace BattleBlade_SteelLegacy.Classes
                 Graphics.death();
             }
         }
-
         public void heal(float heal)
         {
             Game.player.health += heal;
@@ -239,8 +231,7 @@ namespace BattleBlade_SteelLegacy.Classes
             newDmg = (float)(Math.Pow(dmgMultiplier, difference)) * (1 + (scaleStat * 0.5f)) - 1;
             return newDmg;
         }
-
-        public float wepDamageWithWeaponScaling(Item weapon)
+        public float wepDamageWithWeaponScaling(Weapon weapon)
         {
             float damage = 0;
 
@@ -249,7 +240,7 @@ namespace BattleBlade_SteelLegacy.Classes
             foreach (Stat.StatName statName in statNames)
             {
                 int minStatValue = weapon.minStats[statName];
-                int roleStatValue = Game.player.role.getStat(statName).value;
+                int roleStatValue = Game.player.role.getStat(statName);
 
                 if (minStatValue > roleStatValue || minStatValue == 1)
                 {
@@ -281,11 +272,11 @@ namespace BattleBlade_SteelLegacy.Classes
             {
                 if (item.use == Item.Use.Hold)
                 {
-                    weapons.Add(item);
+                    weapons.Add((Weapon)item);
                 }
                 else if (item.use == Item.Use.Wear)
                 {
-                    armor.Add(item);
+                    armor.Add((Armor)item);
                 }
                 else if (item.use == Item.Use.Heal)
                 {
@@ -299,6 +290,7 @@ namespace BattleBlade_SteelLegacy.Classes
 
             var sortedList = listsList.OrderByDescending(l => l.Count()).ToList();
 
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("Inventory: ");
             Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             string title = string.Format("{0,-35}{1,-35}{2,-35}\n", "Weapons", "Armor", "Heals");
@@ -308,30 +300,54 @@ namespace BattleBlade_SteelLegacy.Classes
             string inv = "";
             for (int i = 0; i < sortedList[0].Count; i++) // MADE A SORTED LIST SO I COULD GET THE COUNT OF ALL ITEMS COLLECTIVELY
             {
+
+                //Weapon
                 try
                 {
-                    weaponSpot = weapons[i].name.ToLower();
-                    if (weapons[i].equipped)
+                    // Cast to Weapon and get name and equipped status
+                    Weapon weapon = weapons[i] as Weapon;
+                    if (weapon != null)
                     {
-                        weaponSpot = "EQ >> " + weaponSpot.ToUpper();
+                        weaponSpot = weapon.name.ToLower();
+                        if (weapon.equipped)
+                        {
+                            weaponSpot = "EQ >> " + weaponSpot.ToUpper();
+                        }
+                    }
+                    else
+                    {
+                        weaponSpot = " ";
                     }
                 }
                 catch (ArgumentOutOfRangeException)
                 {
                     weaponSpot = " ";
                 }
+
+                //Armor
                 try
                 {
-                    armorSpot = armor[i].name.ToLower();
-                    if (armor[i].equipped)
+                    // Cast to Weapon and get name and equipped status
+                    Armor arm = armor[i] as Armor;
+                    if (arm != null)
                     {
-                        armorSpot = "EQ >> " + armorSpot.ToUpper();
+                        armorSpot = arm.name.ToLower();
+                        if (arm.equipped)
+                        {
+                            armorSpot = "EQ >> " + armorSpot.ToUpper();
+                        }
+                    }
+                    else
+                    {
+                        armorSpot = " ";
                     }
                 }
                 catch (ArgumentOutOfRangeException)
                 {
                     armorSpot = " ";
                 }
+
+                //Consumables
                 try
                 {
                     healsSpot = heals[i].name.ToLower() + " x" + heals[i].currentStack;
@@ -345,9 +361,8 @@ namespace BattleBlade_SteelLegacy.Classes
             }
 
             Console.WriteLine(inv);
-            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         }
-
         public void printStats()
         {
             string choice = "";
@@ -365,13 +380,14 @@ namespace BattleBlade_SteelLegacy.Classes
                 string distWalkedStr = "Distance Walked: " + Game.player.distWalked.ToString();
                 string curStageStr = "Current Stage: " + Game.map.getStage().ToString();
                 string armorStr = "Armor Rating: " + Game.player.AR.ToString();
-                string faithStr = "Faith: " + Game.player.faith;
-                string strength = Game.player.role.getStat(Stat.StatName.Strength).name + ": " + Game.player.role.getStat(Stat.StatName.Strength).value;
-                string luck = Game.player.role.getStat(Stat.StatName.Luck).name + ": " + Game.player.role.getStat(Stat.StatName.Luck).value;
-                string vigor = Game.player.role.getStat(Stat.StatName.Vigor).name + ": " + Game.player.role.getStat(Stat.StatName.Vigor).value;
-                string speed = Game.player.role.getStat(Stat.StatName.Speed).name + ": " + Game.player.role.getStat(Stat.StatName.Speed).value;
-                string intelligence = Game.player.role.getStat(Stat.StatName.Intelligence).name + ": " + Game.player.role.getStat(Stat.StatName.Intelligence).value;
-                string precision = Game.player.role.getStat(Stat.StatName.Precision).name + ": " + Game.player.role.getStat(Stat.StatName.Precision).value;
+                string faithStr = "Faith: " + Game.player.role.getStat(Stat.StatName.Faith);
+                string favorStr = "Favor: " + Game.player.role.getStat(Stat.StatName.Favor);
+                string strength = "Strength: " + Game.player.role.getStat(Stat.StatName.Strength);
+                string luck = "Luck: " + Game.player.role.getStat(Stat.StatName.Luck);
+                string vigor = "Vigor: " + Game.player.role.getStat(Stat.StatName.Vigor);
+                string speed = "Speed: " + Game.player.role.getStat(Stat.StatName.Speed);
+                string intelligence = "Intelligence: " + Game.player.role.getStat(Stat.StatName.Intelligence);
+                string precision = "Precision: " + Game.player.role.getStat(Stat.StatName.Precision);
 
                 leftStats[0] = healthStr;
                 leftStats[1] = xpStr;
@@ -386,10 +402,10 @@ namespace BattleBlade_SteelLegacy.Classes
                 rightStats[1] = nxtLvl;
                 rightStats[2] = curStageStr;
                 rightStats[3] = faithStr;
-                rightStats[4] = vigor;
-                rightStats[5] = intelligence;
-                rightStats[6] = armorStr;
-                rightStats[7] = "";
+                rightStats[4] = favorStr;
+                rightStats[5] = vigor;
+                rightStats[6] = intelligence;
+                rightStats[7] = armorStr;
 
 
                 Console.WriteLine("\n" + Game.player.name + "'s Stats\n~~~~~~~~~~~~~~~~~~\n");
@@ -418,7 +434,7 @@ namespace BattleBlade_SteelLegacy.Classes
                 Text.SetTextColor(Text.TC.W);
                 try
                 {
-                    choice = Console.ReadLine().ToLower();
+                    choice = Game.GetPlayerInput();
 
                     if (choice.Contains("name") || choice.Contains("1"))
                     {

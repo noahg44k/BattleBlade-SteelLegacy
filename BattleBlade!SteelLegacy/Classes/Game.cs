@@ -10,12 +10,21 @@ namespace BattleBlade_SteelLegacy.Classes
     {
         public static Player player = new Player();
         public static Map map = new Map();
+        public static List<Stat.StatName> statNames = new List<Stat.StatName> { 
+            Stat.StatName.Strength,
+            Stat.StatName.Intelligence,
+            Stat.StatName.Luck,
+            Stat.StatName.Vigor,
+            Stat.StatName.Speed,
+            Stat.StatName.Precision,
+            Stat.StatName.Faith,
+            Stat.StatName.Favor
+        };
 
         static void Main()
         {
-            Item items = new Item();
-            items.buildItemDex();
-            Enemy.currentEnemy.buildEnemyDex();
+            ItemManager.buildItemDex();
+            EnemyManager.buildEnemyDex();
             map.checkStage();
             gameLoop();
         }
@@ -25,7 +34,6 @@ namespace BattleBlade_SteelLegacy.Classes
             playerActions();
         }
 
-        //Intro
         public static void Intro()
         {
             Graphics.PrintTitleCard();
@@ -77,7 +85,6 @@ namespace BattleBlade_SteelLegacy.Classes
                 }
             }
         }
-
         public static void welcomeNewSave()
         {
             Graphics.PrintTitleCard();
@@ -85,12 +92,12 @@ namespace BattleBlade_SteelLegacy.Classes
             Text.Color("What is your name?", Text.TC.W);
             string name = Console.ReadLine();
             player.name = name;
-            player.currentWeapon = player.pm.getInvItem("fist");
+            player.currentWeapon = (Weapon)player.pm.getInvItem("fist");
 
             while (true)
             {
                 ChooseClass();
-                player.maxHealth = Role.calculateHealth(player.role.getStat(Stat.StatName.Vigor).value);
+                player.maxHealth = Role.calculateHealth(player.role.getStat(Stat.StatName.Vigor));
                 player.health = player.maxHealth;
                 Graphics.PrintTitleCard();
                 Text.Color("Let's begin!", Text.TC.E);
@@ -117,7 +124,7 @@ namespace BattleBlade_SteelLegacy.Classes
                     PrintRoleInfo(role);
                 }
 
-                string choice = Console.ReadLine();
+                string choice = GetPlayerInput();
 
                 if (TrySelectRole(choice, Role.RoleName.Thief, "You selected the Thief class!"))
                 {
@@ -149,22 +156,17 @@ namespace BattleBlade_SteelLegacy.Classes
                 }
             }
         }
-
         private static void PrintRoleInfo(Role role)
         {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine($"{role.roleName}");
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine(role.desc);
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            foreach (Stat stat in role.roleStats)
+            Text.Color($"{role.roleName}", Text.TC.C);
+            Text.Color(role.desc, Text.TC.c);
+            foreach (KeyValuePair<Stat.StatName, int> kvp in role.roleStats)
             {
-                Console.WriteLine($"{stat.name}: {stat.value}");
+                Text.Color($"{kvp.Key}: {kvp.Value}", Text.TC.g);
             }
-            Console.WriteLine($"Level: {role.roleLevel}");
-            Console.WriteLine($"God: {role.god}\n");
+            Text.Color($"Level: {role.roleLevel}", Text.TC.g);
+            Text.Color($"God: {role.god}\n", Text.TC.g);
         }
-
         private static bool TrySelectRole(string choice, Role.RoleName roleName, string successMessage)
         {
             if (choice.Contains(roleName.ToString(), StringComparison.OrdinalIgnoreCase))
@@ -177,7 +179,7 @@ namespace BattleBlade_SteelLegacy.Classes
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("y/n");
                     Console.ForegroundColor = ConsoleColor.White;
-                    string answer = Console.ReadLine();
+                    string answer = GetPlayerInput();
 
                     if (answer.Equals("y", StringComparison.OrdinalIgnoreCase))
                     {
@@ -233,11 +235,12 @@ namespace BattleBlade_SteelLegacy.Classes
                 }
             }
         }
-
         public static string GetPlayerInput()
         {
             try
             {
+                Text.Print("");
+                Text.SetTextColor();
                 return Console.ReadLine()?.ToLower();
             }
             catch

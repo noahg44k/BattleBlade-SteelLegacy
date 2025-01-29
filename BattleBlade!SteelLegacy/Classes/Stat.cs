@@ -19,7 +19,9 @@ namespace BattleBlade_SteelLegacy.Classes
             Vigor,
             Speed,
             Intelligence,
-            Precision
+            Precision,
+            Faith,
+            Favor
         }
 
         public Stat newStat(StatName name, int value)

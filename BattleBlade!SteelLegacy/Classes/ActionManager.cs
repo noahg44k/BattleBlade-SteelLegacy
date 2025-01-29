@@ -10,107 +10,167 @@ namespace BattleBlade_SteelLegacy.Classes
 {
     public class ActionManager
     {
+        //logic for useItem separated by item type
+        void UseHealItem(Item item)
+        {
+            Graphics.PrintTitleCard();
+            Game.player.pm.heal(item.heal);
+            item.currentStack -= 1;
+            if (item.currentStack == 0)
+                Game.player.inventory.Remove(item);
+            EnemyManager.playerCompletedAction = true;
+            Text.Continue();
+        }
+        void UseWeapon(Item item)
+        {
+            Weapon weapon = item as Weapon; // Cast to Weapon
+            if (weapon != null)
+            {
+                if (!weapon.equipped)
+                {
+                    //if stats are too low to equip weapon, do not continue
+                    if (!weapon.CheckCanEquip(Game.player))
+                    {
+                        return;
+                    }
+
+                    Graphics.PrintTitleCard();
+                    Unequip(Game.player.currentWeapon);
+                    Equip(weapon);
+                    EnemyManager.playerCompletedAction = false;
+                }
+                else
+                {
+                    Graphics.PrintTitleCard();
+                    Unequip(Game.player.currentWeapon);
+                    Equip((Weapon)Game.player.pm.getInvItem("fist"), false);
+                    EnemyManager.playerCompletedAction = false;
+                }
+                Text.Continue();
+            }
+        }
+        void UseArmor(Item item)
+        {
+            Armor armor = item as Armor; // Cast to Armor
+            if (armor != null)
+            {
+                if (!armor.equipped)
+                {
+                    //if stats are too low to equip armor, do not continue
+                    if (!armor.CheckCanEquip(Game.player))
+                    {
+                        return;
+                    }
+                    Graphics.PrintTitleCard();
+                    Unequip(Game.player.currentArmor);
+                    Equip(armor);
+                    EnemyManager.playerCompletedAction = false;
+                }
+                else
+                {
+                    Graphics.PrintTitleCard();
+                    Unequip(Game.player.currentArmor);
+                    Equip((Armor)ItemManager.getItem("nakey"), false);
+                    EnemyManager.playerCompletedAction = false;
+                }
+                Text.Continue();
+            }
+        }
 
         public void useItem()
         {
             while (true)
             {
+                bool foundItem = false;
                 Graphics.PrintTitleCard();
                 Console.WriteLine("What item would you like to use?");
                 Game.player.pm.printInventory();
-                Console.ForegroundColor = ConsoleColor.DarkGray;
-                Console.WriteLine("Press Enter to go back");
-                Text.SetTextColor();
-                string choice = Console.ReadLine();
+                Text.Instructions("Press Enter to go back");
+                
+                string choice = Game.GetPlayerInput();
 
                 if (choice.ToLower() == "" || choice == "nothing" || choice == "back" || choice == "exit" || choice == null)
                 {
-                    Enemy.completedAction = false;
+                    EnemyManager.playerCompletedAction = false;
                     Graphics.PrintTitleCard();
                     return;
                 }
-                else
+                foreach (Item item in Game.player.inventory)
                 {
-                    foreach (Item item in Game.player.inventory)
+
+                    if (choice.ToLower() == item.name.ToLower())
                     {
-                        if (choice.ToLower() == item.name.ToLower())
+                        foundItem = true;
+                        //if unequipping fist while current weapon is fist
+                        if(choice == "fist" && Game.player.currentWeapon.name.ToLower() == "fist")
                         {
-                            if (item.use == Item.Use.Heal)
-                            {
-                                Graphics.PrintTitleCard();
-                                Game.player.pm.heal(item.heal);
-                                item.currentStack -= 1;
-                                if (item.currentStack == 0)
-                                    Game.player.inventory.Remove(item);
-                                Enemy.completedAction = true;
-                                Text.Continue();
-                                return;
-                            }
-                            else if (item.use == Item.Use.Hold)
-                            {
-                                if (!item.equipped)
-                                {
-                                    Graphics.PrintTitleCard();
-                                    Game.player.currentWeapon.equipped = false;
-                                    Game.player.currentWeapon = item;
-                                    Game.player.currentWeapon.equipped = true;
-                                    Console.WriteLine("You equipped {0}", item.name);
-                                    Enemy.completedAction = false;
-                                    Text.Continue();
-                                    return;
-                                }
-                                else
-                                {
-                                    Graphics.PrintTitleCard();
-                                    Game.player.currentWeapon.equipped = false;
-                                    Game.player.currentWeapon = Game.player.pm.getInvItem("fist");
-                                    Game.player.currentWeapon.equipped = true;
-                                    Console.WriteLine("You unequipped {0}", item.name);
-                                    Enemy.completedAction = false;
-                                    Text.Continue();
-                                    return;
-                                }
-                            }
-                            else if (item.use == Item.Use.Wear)
-                            {
-                                if (!item.equipped)
-                                {
-                                    Graphics.PrintTitleCard();
-                                    Game.player.currentArmor.equipped = false;
-                                    Game.player.currentArmor = item;
-                                    Game.player.currentArmor.equipped = true;
-                                    Game.player.AR = Game.player.currentArmor.AR;
-                                    Console.WriteLine("You equipped {0}", item.name);
-                                    Enemy.completedAction = false;
-                                    Text.Continue();
-                                    return;
-                                }
-                                else if (item.equipped)
-                                {
-                                    Graphics.PrintTitleCard();
-                                    Game.player.currentArmor.equipped = false;
-                                    Game.player.currentArmor = Item.getItem("nakey");
-                                    Game.player.AR = 0;
-                                    Console.WriteLine("You unequipped {0}", item.name);
-                                    Enemy.completedAction = false;
-                                    Text.Continue();
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                Graphics.PrintTitleCard();
-                                Enemy.completedAction = false;
-                                Text.InvalidInput(choice + " could not be used!\nPlease type in the name of a useable item...");
-                                break;
-                            }
+                            Text.Error("Can't unequip fists, they are attached to your arms...");
+                            Text.Continue();
+                            break;
+                        }
+                        if (item.use == Item.Use.Heal)
+                        {
+                            UseHealItem(item);
+                            return;
+                        }
+                        else if (item.use == Item.Use.Hold)
+                        {
+                            UseWeapon(item);
+                            return;
+                        }
+                        else if (item.use == Item.Use.Wear) // Handle Armor
+                        {
+                            UseArmor(item);
+                            return;
+                        }
+                        else
+                        {
+                            Graphics.PrintTitleCard();
+                            EnemyManager.playerCompletedAction = false;
+                            Text.InvalidInput(choice + " could not be used!\nPlease type in the name of a useable item...");
+                            break;
                         }
                     }
+                }
+                if (!foundItem)
+                {
                     Graphics.PrintTitleCard();
-                    Enemy.completedAction = false;
+                    EnemyManager.playerCompletedAction = false;
                     Text.InvalidInput("You don't have " + choice + "!\nType in an item name...");
                 }
             }
+        }
+
+        public void Equip(Armor armor, bool announce = true)
+        {
+            armor.equipped = true;
+            Game.player.currentArmor = armor;
+            Game.player.AR = Game.player.currentArmor.AR;
+            if (announce)
+                Text.Instructions($"You equipped {armor.name}");
+        }
+        public void Equip(Weapon weapon, bool announce = true)
+        {
+            weapon.equipped = true;
+            Game.player.currentWeapon = weapon;
+            //do not announce if weapon to equip is fist
+            if (announce && weapon.name.ToLower() != "fist")
+                Text.Instructions($"You equipped {weapon.name}");
+        }
+        public void Unequip(Armor armor, bool announce = true)
+        {
+            armor.equipped = false;
+            Game.player.AR = 0;
+            //do not announce unequipping nakey
+            if (announce && armor.name.ToLower() != "nakey")
+                Text.Instructions($"You unequipped {armor.name}");
+        }
+        public void Unequip(Weapon weapon, bool announce = true)
+        {
+            weapon.equipped = false;
+            //do not announce unequipping fist
+            if (announce && weapon.name.ToLower() != "fist")
+                Text.Instructions($"You unequipped {weapon.name}");
         }
 
         public void adminPickUp(Item item) //SAME LOGIC AS PICKUP EXCEPT WITHOUT THE CONSOLE OUTPUT
@@ -128,25 +188,32 @@ namespace BattleBlade_SteelLegacy.Classes
                 //DO NOTHING
             }
         }
-
         public void pickUp(Item item)
         {
             Graphics.PrintTitleCard();
-            if (item.currentStack < item.stackHeight)
+            if(Game.player.pm.getInvItem(item.name) == null)
             {
                 item.currentStack += 1;
-                if (!Game.player.inventory.Contains(item))
-                {
-                    Game.player.inventory.Add(item);
-                }
-                Console.WriteLine("You picked up {0}", item.name + "!");
+                Game.player.inventory.Add(item);
+                Text.Color($"You picked up {item.name}!", Text.TC.Y);
+                SaveData.Save();
             }
             else
             {
-                Console.WriteLine("You encountered a " + item.name + ", but you have the maximum amount of that item already.");
+                if (Game.player.pm.getInvItem(item.name).currentStack < item.stackHeight)
+                {
+                    item.currentStack += 1;
+                    Game.player.inventory.Add(item);
+                    Text.Color($"You picked up {item.name}!", Text.TC.Y);
+                }
+                else
+                {
+                    Text.Color($"You encountered a {item.name}, but you have the maximum amount of that item already.", Text.TC.y);
+                }
+                SaveData.Save();
             }
-            SaveData.Save();
         }
+
         public void pray()
         {
             PrayController pc = new PrayController();
@@ -156,6 +223,7 @@ namespace BattleBlade_SteelLegacy.Classes
         //REST VARS
         int restLimit = 8;
         public int restLevel = 0;
+        int previousDist = 0;
 
         public void rest()
         {
@@ -213,37 +281,28 @@ namespace BattleBlade_SteelLegacy.Classes
             }
 
         }
-
-        public void explore()
+        /// <summary>
+        /// A random chance to take a rest while walking or to continue walking
+        /// </summary>
+        /// <param name="pd">previousDistance</param>
+        /// <param name="walkTime"></param>
+        public void exploreRest(int pd, int walkTime)
         {
             Random rand = new Random();
-            int num = rand.Next(0, 7);
-            int previousDist = 0;
-            int walkTime;
+            int num = rand.Next(0, 3);
 
-            Graphics.PrintTitleCard();
-            Console.WriteLine("                                            (  N  )");
-            Console.WriteLine("What direction would you like to travel in? (W + E)");
-            Console.WriteLine("                                            (  S  )");
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("(North, West, Forward, Left, etc.)");
-            Text.SetTextColor();
-            string direction = Console.ReadLine();
             switch (num)
             {
-                case 0: // ENCOUNTER ENEMY
-                    Enemy.currentEnemy.encounterEnemy();
-                    Console.ResetColor();
-                    break;
-                case 1: // LONG WALK AND REST
+                case 0:
                     Text.SetTextColor();
+                    Graphics.PrintTitleCard();
                     int dist = rand.Next(5, 9);
                     Console.WriteLine("After a long voyage of {0}", dist + " miles, you can no longer continue. You lie on the floor and rest.");
                     Game.player.distWalked += dist;
 
-                    if (Game.player.distWalked >= previousDist + 8)
+                    if (Game.player.distWalked >= pd + 8)
                     {
-                        previousDist = Game.player.distWalked;
+                        pd = Game.player.distWalked;
                         restLevel = 0;
                     }
 
@@ -252,6 +311,71 @@ namespace BattleBlade_SteelLegacy.Classes
                     Game.player.luckWalkCounter -= dist;
                     Text.Continue();
                     rest();
+                    break;
+                case 1:
+                    Graphics.PrintTitleCard();
+                    dist = rand.Next(1, 5);
+                    Console.WriteLine("After a short trek of {0}", dist + " miles, you decide you can continue.");
+                    Game.player.distWalked += dist;
+
+                    if (Game.player.distWalked >= pd + 8)
+                    {
+                        pd = Game.player.distWalked;
+                        restLevel = 0;
+                    }
+
+                    walkTime = dist * 16;
+                    Clock.increaseTime(walkTime);
+                    Game.player.luckWalkCounter -= dist;
+                    Text.Continue();
+                    break;
+                case 2:
+                    Graphics.PrintTitleCard();
+                    dist = rand.Next(5, 9);
+                    Console.WriteLine("After a long journey of {0}", dist + " miles, you muster the strength to continue.");
+                    Game.player.distWalked += dist;
+
+                    if (Game.player.distWalked >= pd + 8)
+                    {
+                        pd = Game.player.distWalked;
+                        restLevel = 0;
+                    }
+
+                    walkTime = dist * 16;
+                    Clock.increaseTime(walkTime);
+                    Game.player.luckWalkCounter -= dist;
+                    Text.Continue();
+                    break;
+                case 3:
+                    break;
+            }
+        }
+        public void explore()
+        {
+            Random rand = new Random();
+            int num = rand.Next(0, 6);
+            int walkTime = 0;
+
+            Graphics.PrintTitleCard();
+            Console.WriteLine("                                            (  N  )");
+            Console.WriteLine("What direction would you like to travel in? (W + E)");
+            Console.WriteLine("                                            (  S  )");
+            Text.Color("(North, West, Forward, Left, etc.)", Text.TC.g);
+
+            Text.Print("");
+            Text.SetTextColor();
+            string direction = Console.ReadLine();
+
+            Graphics.PrintTitleCard();
+            Text.Timed("You traveled " + direction + "!", 25, Text.TC.B);
+            Text.Continue();
+
+            switch (num)
+            {
+                case 0:
+                case 1: // ENCOUNTER ENEMY
+                    EnemyManager.encounterEnemy();
+                    Console.ResetColor();
                     break;
                 case 2: // ENCOUNTER ITEM
                     Graphics.PrintTitleCard();
@@ -264,54 +388,10 @@ namespace BattleBlade_SteelLegacy.Classes
                     pickUp(Game.player.stageItemsAvailable.ElementAt(itemType));
                     Text.Continue();
                     break;
-                case 3: // ENCOUNTER ENEMY
-                    Enemy.currentEnemy.encounterEnemy();
-                    Console.ResetColor();
-                    break;
-                case 4: // SHORT WALK
-                    Graphics.PrintTitleCard();
-                    dist = rand.Next(1, 5);
-                    Console.WriteLine("After a short treck of {0}", dist + " miles, you decide you can continue.");
-                    Game.player.distWalked += dist;
-
-                    if (Game.player.distWalked >= previousDist + 8)
-                    {
-                        previousDist = Game.player.distWalked;
-                        restLevel = 0;
-                    }
-
-                    walkTime = dist * 16;
-                    Clock.increaseTime(walkTime);
-                    Game.player.luckWalkCounter -= dist;
-                    Text.Continue();
-                    break;
-                case 5: // LONG WALK
-                    Graphics.PrintTitleCard();
-                    dist = rand.Next(5, 9);
-                    Console.WriteLine("After a long journey of {0}", dist + " miles, you muster the strength to continue.");
-                    Game.player.distWalked += dist;
-
-                    if (Game.player.distWalked >= previousDist + 8)
-                    {
-                        previousDist = Game.player.distWalked;
-                        restLevel = 0;
-                    }
-
-                    walkTime = dist * 16;
-                    Clock.increaseTime(walkTime);
-                    Game.player.luckWalkCounter -= dist;
-                    Text.Continue();
-                    break;
-                case 6: // ENCOUNTER ITEM
-                    Graphics.PrintTitleCard();
-
-                    itemType = rand.Next(0, Game.player.stageItemsAvailable.Count());
-
-                    Console.WriteLine("What luck! You encountered an item!");
-                    Text.Continue();
-
-                    pickUp(Game.player.stageItemsAvailable.ElementAt(itemType));
-                    Text.Continue();
+                case 3:
+                case 4:
+                case 5: // WALK AND MAYBE REST
+                    exploreRest(previousDist, walkTime);
                     break;
             }
         }
@@ -322,10 +402,12 @@ namespace BattleBlade_SteelLegacy.Classes
             {
                 Graphics.PrintTitleCard();
                 Console.WriteLine("What would you like to change your name to?");
-                Console.ForegroundColor = ConsoleColor.DarkGray;
-                Console.WriteLine("Press Enter to cancel");
+                Text.Instructions("Press Enter to cancel");
+
+                Text.Print("");
                 Text.SetTextColor();
                 string name = Console.ReadLine();
+
                 if (name == "" || name == null)
                 {
                     return;
@@ -338,7 +420,7 @@ namespace BattleBlade_SteelLegacy.Classes
                         Console.ForegroundColor = ConsoleColor.DarkGray;
                         Console.WriteLine("(y/n)");
                         Text.SetTextColor();
-                        string confirm = Console.ReadLine().ToLower();
+                        string confirm = Game.GetPlayerInput();
                         if (confirm == "y")
                         {
                             Game.player.name = name;
@@ -357,159 +439,142 @@ namespace BattleBlade_SteelLegacy.Classes
             }
         }
 
+        //the logic for inspect item but for specific item types
+        void InspectWeapon(Item item)
+        {
+            Weapon weapon = item as Weapon;
+            if (weapon != null)
+            {
+                Graphics.PrintTitleCard();
+                Console.WriteLine(item.name);
+                Console.WriteLine("Equipped: " + weapon.equipped);
+                Console.WriteLine("Energy Consumption: " + weapon.energyConsumption);
+                Console.WriteLine("Base Damage: " + weapon.wepDmg);
+                Console.WriteLine("Damage with Skill Proficiencies: " + (weapon.wepDmg + Game.player.pm.wepDamageWithWeaponScaling(weapon)).ToString());
+                Console.Write("Current weapon damage: ");
+                Text.SetTextColor(Text.TC.C);
+                Console.WriteLine((Game.player.currentWeapon.wepDmg + Game.player.pm.wepDamageWithWeaponScaling(Game.player.currentWeapon)).ToString());
+                Text.SetTextColor();
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
+                //MIN STATS
+                foreach (KeyValuePair<Stat.StatName, int> kvp in weapon.minStats)
+                {
+                    if (Game.player.role.getStat(kvp.Key) >= kvp.Value)
+                    {
+                        Text.SetTextColor(Text.TC.E);
+                    }
+                    else
+                    {
+                        Text.SetTextColor();
+                    }
+                    Console.WriteLine(String.Format("{0,-25}", "Minimum " + kvp.Key + ": ") + String.Format("{0,10}", kvp.Value));
+                    Text.SetTextColor();
+                }
+
+                Console.Write("\n");
+
+                //SCALE STATS
+                foreach (KeyValuePair<Stat.StatName, int> kvp in weapon.sclStats)
+                {
+                    Console.WriteLine(String.Format("{0,-25}", kvp.Key + " Scaling: ") + String.Format("{0,10}", kvp.Value));
+                }
+                Text.Continue();
+            }
+        }
+        void InspectArmor(Item item)
+        {
+            Armor armor = item as Armor;
+            if (armor != null)
+            {
+                Graphics.PrintTitleCard();
+                Console.WriteLine(armor.name);
+                Console.WriteLine("Equipped: " + armor.equipped);
+                Console.WriteLine("Armor Rating: " + armor.AR);
+                Console.Write("Current Armor Rating: ");
+                Text.SetTextColor(Text.TC.C);
+                Console.WriteLine(Game.player.currentArmor.AR.ToString());
+                Text.SetTextColor();
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                //MIN STATS
+                foreach (KeyValuePair<Stat.StatName, int> kvp in armor.minStats)
+                {
+                    if (Game.player.role.getStat(kvp.Key) >= kvp.Value)
+                    {
+                        Text.SetTextColor(Text.TC.E);
+                    }
+                    else
+                    {
+                        Text.SetTextColor();
+                    }
+                    Console.WriteLine(String.Format("{0,-25}", "Minimum " + kvp.Key + ": ") + String.Format("{0,10}", kvp.Value));
+                    Text.SetTextColor();
+                }
+
+                Console.Write("\n");
+
+                //SCALE STATS
+                foreach (KeyValuePair<Stat.StatName, int> kvp in armor.sclStats)
+                {
+                    Console.WriteLine(String.Format("{0,-25}", kvp.Key + " Scaling: ") + String.Format("{0,10}", kvp.Value));
+                }
+                Text.Continue();
+            }
+        }
         public void inspectItem()
         {
             string name = "";
             while (true)
             {
-                try
+                bool foundItem = false;
+                Graphics.PrintTitleCard();
+                Text.Print("What item would you like to inspect?\n");
+                Game.player.pm.printInventory();
+                Text.Instructions("Press Enter to cancel");
+                Text.SetTextColor();
+                name = Game.GetPlayerInput();
+
+                if (name == "" || name == null)
                 {
-                    Graphics.PrintTitleCard();
-                    Console.WriteLine("What item would you like to inspect?\n");
-                    Game.player.pm.printInventory();
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.WriteLine("Press Enter to cancel");
-                    Text.SetTextColor();
-                    name = Console.ReadLine();
+                    return;
+                }
+                foreach (Item item in Game.player.inventory)
+                {
+                    if (item.name.ToLower() == name)
+                    {
+                        foundItem = true;
 
-                    if (name == "" || name == null)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        try
+                        // Weapons
+                        if (item.use == Item.Use.Hold)
                         {
-                            foreach (Item item in Game.player.inventory)
-                            {
-                                if (item.name.ToLower() == name.ToLower())
-                                {
-                                    if (item.use == Item.Use.Hold)
-                                    {
-                                        Graphics.PrintTitleCard();
-                                        Console.WriteLine(item.name);
-                                        Console.WriteLine("Equipped: " + item.equipped);
-                                        Console.WriteLine("Energy Consumption: " + item.energyConsumption);
-                                        Console.WriteLine("Base Damage: " + item.wepDmg);
-                                        Console.WriteLine("Damage with Skill Proficiencies: " + (item.wepDmg + Game.player.pm.wepDamageWithWeaponScaling(item)).ToString());
-                                        Console.Write("Current weapon damage: ");
-                                        Text.SetTextColor(Text.TC.C);
-                                        Console.WriteLine((Game.player.currentWeapon.wepDmg + Game.player.pm.wepDamageWithWeaponScaling(Game.player.currentWeapon)).ToString());
-                                        Text.SetTextColor();
-                                        Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-
-                                        try
-                                        {
-                                            //MIN STATS
-                                            foreach (KeyValuePair<Stat.StatName, int> kvp in item.minStats)
-                                            {
-                                                if (Game.player.role.getStat(kvp.Key).value >= kvp.Value)
-                                                {
-                                                    Text.SetTextColor(Text.TC.E);
-                                                }
-                                                else
-                                                {
-                                                    Text.SetTextColor();
-                                                }
-                                                Console.WriteLine(String.Format("{0,-25}", "Minimum " + kvp.Key + ": ") + String.Format("{0,10}", kvp.Value));
-                                                Text.SetTextColor();
-                                            }
-
-                                            Console.Write("\n");
-
-                                            //SCALE STATS
-                                            foreach (KeyValuePair<Stat.StatName, int> kvp in item.sclStats)
-                                            {
-                                                Console.WriteLine(String.Format("{0,-25}", kvp.Key + " Scaling: ") + String.Format("{0,10}", kvp.Value));
-                                            }
-                                        }
-                                        catch
-                                        {
-                                            Console.WriteLine("smt wrong with the dictionary");
-                                        }
-                                        Text.Continue();
-                                    }
-                                    else if (item.use == Item.Use.Wear)
-                                    {
-                                        Graphics.PrintTitleCard();
-                                        Console.WriteLine(item.name);
-                                        Console.WriteLine("Equipped: " + item.equipped);
-                                        Console.WriteLine("Armor Rating: " + item.AR);
-                                        Console.Write("Current Armor Rating: ");
-                                        Text.SetTextColor(Text.TC.C);
-                                        Console.WriteLine(Game.player.currentArmor.AR.ToString());
-                                        Text.SetTextColor();
-                                        Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                                        //MIN STATS
-                                        foreach (KeyValuePair<Stat.StatName, int> kvp in item.minStats)
-                                        {
-                                            if (Game.player.role.getStat(kvp.Key).value >= kvp.Value)
-                                            {
-                                                Text.SetTextColor(Text.TC.E);
-                                            }
-                                            else
-                                            {
-                                                Text.SetTextColor();
-                                            }
-                                            Console.WriteLine(String.Format("{0,-25}", "Minimum " + kvp.Key + ": ") + String.Format("{0,10}", kvp.Value));
-                                            Text.SetTextColor();
-                                        }
-
-                                        Console.Write("\n");
-
-                                        //SCALE STATS
-                                        foreach (KeyValuePair<Stat.StatName, int> kvp in item.sclStats)
-                                        {
-                                            Console.WriteLine(String.Format("{0,-25}", kvp.Key + " Scaling: ") + String.Format("{0,10}", kvp.Value));
-                                        }
-                                        Text.Continue();
-                                    }
-                                    else if (item.use == Item.Use.Heal)
-                                    {
-                                        Graphics.PrintTitleCard();
-                                        Console.WriteLine(item.name);
-                                        Console.WriteLine("Heal: " + item.heal);
-                                        Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                                        //MIN STATS
-                                        foreach (KeyValuePair<Stat.StatName, int> kvp in item.minStats)
-                                        {
-                                            if (Game.player.role.getStat(kvp.Key).value >= kvp.Value)
-                                            {
-                                                Text.SetTextColor(Text.TC.E);
-                                            }
-                                            else
-                                            {
-                                                Text.SetTextColor();
-                                            }
-                                            Console.WriteLine(String.Format("{0,-25}", "Minimum " + kvp.Key + ": ") + String.Format("{0,10}", kvp.Value));
-                                            Text.SetTextColor();
-                                        }
-
-                                        Console.Write("\n");
-
-                                        //SCALE STATS
-                                        foreach (KeyValuePair<Stat.StatName, int> kvp in item.sclStats)
-                                        {
-                                            Console.WriteLine(String.Format("{0,-25}", kvp.Key + " Scaling: ") + String.Format("{0,10}", kvp.Value));
-                                        }
-                                        Text.Continue();
-                                    }
-                                }
-                            }
+                            InspectWeapon(item);
                         }
-                        catch
+
+                        // Armor
+                        else if (item.use == Item.Use.Wear)
                         {
-                            Text.InvalidInput(name + " is not a valid name");
+                            InspectArmor(item);
+                        }
+
+                        // Consumables
+                        else if (item.use == Item.Use.Heal)
+                        {
+                            Graphics.PrintTitleCard();
+                            Console.WriteLine(item.name);
+                            Console.WriteLine("Heal: " + item.heal);
+                            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
+                            Console.Write("\n");
+                            Text.Continue();
                         }
                     }
                 }
-                catch
+                if (!foundItem)
                 {
-                    Text.InvalidInput("It not work idk");
+                    Text.InvalidInput();
                 }
             }
         }
-
         public void dropItem()
         {
             string name = "";
@@ -518,14 +583,10 @@ namespace BattleBlade_SteelLegacy.Classes
                 try
                 {
                     Graphics.PrintTitleCard();
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("What item would you like to drop?\n");
-                    Text.SetTextColor();
+                    Text.Color("What item would you like to drop?\n", Text.TC.R);
                     Game.player.pm.printInventory();
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.WriteLine("Press Enter to cancel");
-                    Text.SetTextColor();
-                    name = Console.ReadLine();
+                    Text.Instructions("Press Enter to cancel");
+                    name = Game.GetPlayerInput();
 
                     if (name == "" || name == null || name == " ")
                     {
@@ -536,7 +597,7 @@ namespace BattleBlade_SteelLegacy.Classes
                     {
                         if (name.ToLower() == item.name.ToLower())
                         {
-                            if (item.name.ToLower() == "fist")
+                            if (name.ToLower() == "fist")
                             {
                                 Text.InvalidInput("Cannot drop fists! They are attached to your arms...");
                             }
@@ -544,7 +605,7 @@ namespace BattleBlade_SteelLegacy.Classes
                             {
                                 if (item == Game.player.currentWeapon)
                                 {
-                                    Game.player.currentWeapon = Item.getItem("fist");
+                                    Game.player.currentWeapon = (Weapon)Game.player.pm.getInvItem("fist");
                                 }
                                 item.currentStack -= 1;
                                 if (item.currentStack == 0)

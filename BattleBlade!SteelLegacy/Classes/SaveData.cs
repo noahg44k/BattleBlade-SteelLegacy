@@ -13,11 +13,9 @@ namespace BattleBlade_SteelLegacy.Classes
 {
     public class Data
     {
-        public List<string> inventory { get; set; } = new List<string>();
+        public Dictionary<string, int> inventory { get; set; } = new Dictionary<string, int>();
         public string roleName { get; set; }
-        public List<string> stats { get; set; } = new List<string>();
-        public List<int> statValues { get; set; } = new List<int>();
-        public List<int> inventoryItemCount { get; set; } = new List<int>();
+        public Dictionary<string, int> stats { get; set; } = new Dictionary<string, int>();
         public string currentWeapon { get; set; }
         public string currentArmor { get; set; }
         public List<string> stageItemsAvailable { get; set; } = new List<string>();
@@ -27,8 +25,6 @@ namespace BattleBlade_SteelLegacy.Classes
         public float dmg { get; set; }
         public float dmgMod { get; set; }
         public int AR { get; set; }
-        public int favor { get; set; }
-        public int faith { get; set; }
         public long xp { get; set; }
         public int lvl { get; set; }
         public int distWalked { get; set; }
@@ -48,10 +44,8 @@ namespace BattleBlade_SteelLegacy.Classes
             var data = new Data();
             
             data.stageItemsAvailable = new List<string>();
-            data.inventory = new List<string>();
-            data.inventoryItemCount = new List<int>();
-            data.stats = new List<string>();
-            data.statValues = new List<int>();
+            data.inventory = new Dictionary<string, int>();
+            data.stats = new Dictionary<string, int>();
 
             if (data.inventory != null)
                 data.inventory.Clear();
@@ -59,13 +53,10 @@ namespace BattleBlade_SteelLegacy.Classes
                 data.stageItemsAvailable.Clear();
             if (data.stats != null)
                 data.stats.Clear();
-            if (data.statValues != null)
-                data.statValues.Clear();
 
             for (int i = 0; i < Game.player.inventory.Count; i++)
             {
-                data.inventory.Add(Game.player.inventory[i].name);
-                data.inventoryItemCount.Add(Game.player.inventory[i].currentStack);
+                data.inventory[Game.player.inventory[i].name] = (Game.player.inventory[i].currentStack);
             }
 
             for (int i = 0; i < Game.player.stageItemsAvailable.Count; i++)
@@ -73,10 +64,9 @@ namespace BattleBlade_SteelLegacy.Classes
                 data.stageItemsAvailable.Add(Game.player.stageItemsAvailable[i].name);
             }
 
-            foreach (Stat stat in Game.player.role.roleStats)
+            foreach(KeyValuePair<Stat.StatName, int> kvp in Game.player.role.roleStats)
             {
-                data.stats.Add(stat.name.ToString());
-                data.statValues.Add(stat.value);
+                data.stats[kvp.Key.ToString()] = kvp.Value;
             }
 
             data.roleName = Game.player.role.roleName.ToString();
@@ -88,8 +78,6 @@ namespace BattleBlade_SteelLegacy.Classes
             data.dmg = Game.player.dmg;
             data.dmgMod = Game.player.dmgMod;
             data.AR = Game.player.AR;
-            data.faith = Game.player.faith;
-            data.favor = Game.player.favor;
             data.xp = Game.player.xp;
             data.lvl = Game.player.lvl;
             data.distWalked = Game.player.distWalked;
@@ -114,13 +102,12 @@ namespace BattleBlade_SteelLegacy.Classes
             Game.player.resetPlayer();
 
             data.stageItemsAvailable = new List<string>();
-            data.inventory = new List<string>();
-            data.inventoryItemCount = new List<int>();
+            data.inventory = new Dictionary<string, int>();
 
 
             for (int i = 0; i < Game.player.inventory.Count; i++)
             {
-                data.inventory.Add(Game.player.inventory[i].name);
+                data.inventory[Game.player.inventory[i].name] = (Game.player.inventory[i].currentStack);
             }
             for (int i = 0; i < Game.player.stageItemsAvailable.Count; i++)
             {
@@ -134,8 +121,6 @@ namespace BattleBlade_SteelLegacy.Classes
             data.dmg = Game.player.dmg;
             data.dmgMod = Game.player.dmgMod;
             data.AR = Game.player.AR;
-            data.faith = Game.player.faith;
-            data.favor = Game.player.favor;
             data.xp = Game.player.xp;
             data.lvl = Game.player.lvl;
             data.distWalked = Game.player.distWalked;
@@ -167,14 +152,18 @@ namespace BattleBlade_SteelLegacy.Classes
                 if (Game.player.stageItemsAvailable != null)
                     Game.player.stageItemsAvailable.Clear();
 
-                for (int i = 0; i < data.inventory.Count; i++)
+                foreach (KeyValuePair<string, int> kvp in data.inventory)
                 {
-                    Game.player.inventory.Add(Item.getItem(data.inventory[i]));
-                    Game.player.inventory[i].currentStack = data.inventoryItemCount[i];
+                    //creates a copy of the item from the item manager so that it does not effect the current
+                    //stack value of the item permanently
+                    Item item = ItemManager.getItem(kvp.Key);
+                    item.currentStack = kvp.Value;
+                    Game.player.inventory.Add(item);
+                    Game.player.pm.getInvItem(item.name).currentStack = kvp.Value;
                 }
                 for (int i = 0; i < data.stageItemsAvailable.Count; i++)
                 {
-                    Game.player.stageItemsAvailable.Add(Item.getItem(data.stageItemsAvailable[i]));
+                    Game.player.stageItemsAvailable.Add(ItemManager.getItem(data.stageItemsAvailable[i]));
                 }
 
                 Role.buildRoleIndex();
@@ -183,22 +172,21 @@ namespace BattleBlade_SteelLegacy.Classes
                 if (Game.player.role.roleStats != null) // IF LIST IS NOT EMPTY
                     Game.player.role.roleStats.Clear(); // CLEAR IT
 
-                for (int i = 0; i < data.stats.Count; i++)
+                foreach (KeyValuePair<string, int> kvp in data.stats)
                 {
-                    Game.player.role.roleStats.Add(Stat.statContr.newStat(Enum.Parse<Stat.StatName>(data.stats[i]), data.statValues[i]));
+                    Enum.TryParse(kvp.Key, out Stat.StatName statName);
+                    Game.player.role.roleStats[statName] = kvp.Value;
                 }
 
-                Game.player.currentWeapon = Item.getItem(data.currentWeapon);
+                Game.player.currentWeapon = (Weapon)Game.player.pm.getInvItem(data.currentWeapon);
                 Game.player.currentWeapon.equipped = true;
-                Game.player.currentArmor = Item.getItem(data.currentArmor);
+                Game.player.currentArmor = (Armor)Game.player.pm.getInvItem(data.currentArmor);
                 Game.player.currentArmor.equipped = true;
                 Game.player.name = data.name;
                 Game.player.maxHealth = data.maxHealth;
                 Game.player.health = data.health;
                 Game.player.dmg = data.dmg;
                 Game.player.dmgMod = data.dmgMod;
-                Game.player.favor = data.favor;
-                Game.player.faith = data.faith;
                 Game.player.AR = data.AR;
                 Game.player.xp = data.xp;
                 Game.player.lvl = data.lvl;
