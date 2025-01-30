@@ -141,7 +141,7 @@ namespace BattleBlade_SteelLegacy.Classes
             newHealth = baseHealth * (float)(Math.Pow(healthMultiplier, lvl));
             return newHealth;
         }
-        public void raiseStat(Stat.StatName name)
+        public void raiseStat(Stat.StatName name, bool announce = true)
         {
             foreach (KeyValuePair < Stat.StatName, int> kvp in roleStats)
             {
@@ -150,8 +150,11 @@ namespace BattleBlade_SteelLegacy.Classes
                     int value = kvp.Value + 1;
                     roleStats[name] = value;
 
-                    Text.Color(name + " was increased by 1!", Text.TC.Y);
-                    Text.Continue();
+                    if(announce)
+                    {
+                        Text.Color(name + " was increased by 1!", Text.TC.Y);
+                        Text.Continue();
+                    }
 
                     switch (name)
                     {
@@ -171,6 +174,12 @@ namespace BattleBlade_SteelLegacy.Classes
                             // make intelligence change something
                             return;
                         case Stat.StatName.Precision:
+                            // make precision change something
+                            return;
+                        case Stat.StatName.Faith:
+                            // make precision change something
+                            return;
+                        case Stat.StatName.Favor:
                             // make precision change something
                             return;
                         default:

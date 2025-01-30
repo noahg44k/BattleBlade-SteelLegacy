@@ -42,24 +42,28 @@ namespace BattleBlade_SteelLegacy.Classes
             {
                 Text.Color("But you dodged it!", Text.TC.B);
                 Text.Continue();
+                attemptedDodge = false;
             }
             else if (attemptedDodge && !attackDodged)
             {
                 Text.Color("But your dodge failed!", Text.TC.B);
                 dmgTaken = DetermineAtkDmg(EnemyManager.currentEnemy.dmg);
                 Game.player.pm.takeDamage(dmgTaken);
+                attemptedDodge = false;
             }
             else if (attemptedBlock && attackBlocked)
             {
                 Text.Color("But you blocked it!", Text.TC.B);
                 dmgTaken = DetermineAtkDmg(EnemyManager.currentEnemy.dmg) / 2;
                 Game.player.pm.takeDamage(dmgTaken);
+                attemptedBlock = false;
             }
             else if (attemptedBlock && !attackBlocked)
             {
                 Text.Color("But your block failed!", Text.TC.B);
                 dmgTaken = DetermineAtkDmg(EnemyManager.currentEnemy.dmg);
                 Game.player.pm.takeDamage(dmgTaken);
+                attemptedBlock = false;
             }
             else
             {
@@ -77,12 +81,9 @@ namespace BattleBlade_SteelLegacy.Classes
             {
                 Graphics.PrintTitleCard();
                 Game.player.dmg = DetermineAtkDmg(Game.player.currentWeapon.wepDmg + Game.player.pm.wepDamageWithWeaponScaling(Game.player.currentWeapon)) * 5;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("CRITICAL HIT");
-                Text.SetTextColor(Text.TC.W);
-                Console.WriteLine($"You attacked with {Game.player.currentWeapon.name}!");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"You dealt {Game.player.dmg.ToString("0.00")} damage!");
+                Text.Color("CRITICAL HIT", Text.TC.R);
+                Text.Color($"You attacked with {Game.player.currentWeapon.name}!");
+                Text.Color($"You dealt {Math.Round(Game.player.dmg, 2)} damage!", Text.TC.G);
                 Text.SetTextColor(Text.TC.W);
                 EnemyManager.currentEnemy.health -= Game.player.dmg;
                 EnemyManager.playerCompletedAction = true;
@@ -93,9 +94,8 @@ namespace BattleBlade_SteelLegacy.Classes
                 Graphics.PrintTitleCard();
                 //sets damage to weaponDamage PLUS weaponDamageWithScaling
                 Game.player.dmg = DetermineAtkDmg(Game.player.currentWeapon.wepDmg + Game.player.pm.wepDamageWithWeaponScaling(Game.player.currentWeapon));
-                Console.WriteLine($"You attacked with {Game.player.currentWeapon.name}!");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"You dealt {Game.player.dmg.ToString("0.00")} damage!");
+                Text.Color($"You attacked with {Game.player.currentWeapon.name}!");
+                Text.Color($"You dealt {Math.Round(Game.player.dmg, 2)} damage!", Text.TC.G);
                 Text.SetTextColor(Text.TC.W);
                 EnemyManager.currentEnemy.health -= Game.player.dmg;
                 EnemyManager.playerCompletedAction = true;

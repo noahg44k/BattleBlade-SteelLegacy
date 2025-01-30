@@ -32,8 +32,37 @@ namespace BattleBlade_SteelLegacy.Classes
             Clock.printTime();
             Text.SetTextColor(Text.TC.W);
         }
+        public static void PrintCompass()
+        {
+            string top =    ("_____");
+            string n =      ("/  N  \\");
+            string middle = ("|W  +  E|");
+            string s =      ("\\  S  /");
+            string bottom = ("-----");
+
+            string compass = string.Format("{0,22}\n{1,23}\n{2,24}\n{3,23}\n{4,22}\n", top, n, middle, s, bottom);
+            foreach(char c in compass)
+            {
+                Text.SetTextColor();
+                if(c == 'N' ||  c == 'W' || c == 'E' || c == 'S')
+                {
+                    Text.SetTextColor(Text.TC.R);
+                }
+                Console.Write(c);
+            }
+        }
+        public static void WelcomeBackMessage()
+        {
+            PrintTitleCard();
+
+            Text.Timed("Welcome back", 40);
+            Text.Timed(Game.player.name, 160, Text.TC.E);
+            Text.Continue();
+        }
         public static void death()
         {
+            SaveData.Delete();
+
             while (true)
             {
                 PrintTitleCard();
@@ -51,14 +80,12 @@ namespace BattleBlade_SteelLegacy.Classes
                 string choice = Game.GetPlayerInput();
                 if (choice == "y")
                 {
-                    SaveData.Delete();
                     Game.player.resetPlayer();
                     Game.gameLoop();
                 }
                 else if (choice == "n")
                 {
                     Console.WriteLine("I bid you farewell, {0}", Game.player.name + ".");
-                    SaveData.Delete();
                     Environment.Exit(0);
                     return;
                 }

@@ -18,7 +18,7 @@ namespace BattleBlade_SteelLegacy.Classes
         public Dictionary<string, int> stats { get; set; } = new Dictionary<string, int>();
         public string currentWeapon { get; set; }
         public string currentArmor { get; set; }
-        public List<string> stageItemsAvailable { get; set; } = new List<string>();
+        //public List<string> stageItemsAvailable { get; set; } = new List<string>();
         public string name { get; set; }
         public float maxHealth { get; set; }
         public float health { get; set; }
@@ -39,18 +39,25 @@ namespace BattleBlade_SteelLegacy.Classes
     //write all player data;
     public class SaveData
     {
+        static JsonSerializerOptions options = new JsonSerializerOptions
+        {
+            WriteIndented = true, // Adds \n and indentation
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase // Optional: camelCase naming
+        };
+
         public static void Save()
         {
             var data = new Data();
             
-            data.stageItemsAvailable = new List<string>();
+            //data.stageItemsAvailable = new List<string>();
             data.inventory = new Dictionary<string, int>();
             data.stats = new Dictionary<string, int>();
 
             if (data.inventory != null)
                 data.inventory.Clear();
+            /*
             if (data.stageItemsAvailable != null)
-                data.stageItemsAvailable.Clear();
+                data.stageItemsAvailable.Clear();*/
             if (data.stats != null)
                 data.stats.Clear();
 
@@ -59,11 +66,12 @@ namespace BattleBlade_SteelLegacy.Classes
                 data.inventory[Game.player.inventory[i].name] = (Game.player.inventory[i].currentStack);
             }
 
+            /*
             for (int i = 0; i < Game.player.stageItemsAvailable.Count; i++)
             {
                 data.stageItemsAvailable.Add(Game.player.stageItemsAvailable[i].name);
             }
-
+            */
             foreach(KeyValuePair<Stat.StatName, int> kvp in Game.player.role.roleStats)
             {
                 data.stats[kvp.Key.ToString()] = kvp.Value;
@@ -90,7 +98,7 @@ namespace BattleBlade_SteelLegacy.Classes
 
             string fileName = "PlayerData.json";
             string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,fileName);
-            string jsonString = JsonSerializer.Serialize(data);
+            string jsonString = JsonSerializer.Serialize(data, options);
             File.WriteAllText(filePath, jsonString);
 
             Text.Color("Saved player data", Text.TC.E);
@@ -101,7 +109,7 @@ namespace BattleBlade_SteelLegacy.Classes
             var data = new Data();
             Game.player.resetPlayer();
 
-            data.stageItemsAvailable = new List<string>();
+            //data.stageItemsAvailable = new List<string>();
             data.inventory = new Dictionary<string, int>();
 
 
@@ -109,10 +117,12 @@ namespace BattleBlade_SteelLegacy.Classes
             {
                 data.inventory[Game.player.inventory[i].name] = (Game.player.inventory[i].currentStack);
             }
+            /*
             for (int i = 0; i < Game.player.stageItemsAvailable.Count; i++)
             {
                 data.stageItemsAvailable.Add(Game.player.stageItemsAvailable[i].name);
             }
+            */
             data.currentWeapon = Game.player.currentWeapon.name;
             data.currentArmor = Game.player.currentArmor.name;
             data.name = Game.player.name;
@@ -132,7 +142,7 @@ namespace BattleBlade_SteelLegacy.Classes
 
             string fileName = "PlayerData.json";
             string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
-            string jsonString = JsonSerializer.Serialize(data);
+            string jsonString = JsonSerializer.Serialize(data, options);
             File.WriteAllText(filePath, jsonString);
 
             Text.Color("Saved player data", Text.TC.E);
@@ -161,11 +171,15 @@ namespace BattleBlade_SteelLegacy.Classes
                     Game.player.inventory.Add(item);
                     Game.player.pm.getInvItem(item.name).currentStack = kvp.Value;
                 }
+
+                Map m = new Map();
+                m.setStage(data.stage);
+                /*
                 for (int i = 0; i < data.stageItemsAvailable.Count; i++)
                 {
                     Game.player.stageItemsAvailable.Add(ItemManager.getItem(data.stageItemsAvailable[i]));
                 }
-
+                */
                 Role.buildRoleIndex();
                 Role.assignRole(Role.getRole((RoleName)Enum.Parse(typeof(RoleName), data.roleName)));
 
@@ -180,8 +194,11 @@ namespace BattleBlade_SteelLegacy.Classes
 
                 Game.player.currentWeapon = (Weapon)Game.player.pm.getInvItem(data.currentWeapon);
                 Game.player.currentWeapon.equipped = true;
-                Game.player.currentArmor = (Armor)Game.player.pm.getInvItem(data.currentArmor);
-                Game.player.currentArmor.equipped = true;
+                if(data.currentArmor != "Nakey")
+                {
+                    Game.player.currentArmor = (Armor)Game.player.pm.getInvItem(data.currentArmor);
+                    Game.player.currentArmor.equipped = true;
+                }
                 Game.player.name = data.name;
                 Game.player.maxHealth = data.maxHealth;
                 Game.player.health = data.health;
@@ -194,9 +211,6 @@ namespace BattleBlade_SteelLegacy.Classes
                 Game.player.lvlXpCap = data.lvlXpCap;
                 Game.map.setStage(data.stage);
                 Clock.setClock(data.clockDay, data.clockHour, data.clockMinute);
-
-                Text.Color("Loaded player: " + Game.player.name, Text.TC.E);
-                Text.Continue();
             }
             catch (Exception ex)
             {

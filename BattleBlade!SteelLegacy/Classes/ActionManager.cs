@@ -203,7 +203,6 @@ namespace BattleBlade_SteelLegacy.Classes
                 if (Game.player.pm.getInvItem(item.name).currentStack < item.stackHeight)
                 {
                     item.currentStack += 1;
-                    Game.player.inventory.Add(item);
                     Text.Color($"You picked up {item.name}!", Text.TC.Y);
                 }
                 else
@@ -352,47 +351,54 @@ namespace BattleBlade_SteelLegacy.Classes
         }
         public void explore()
         {
-            Random rand = new Random();
-            int num = rand.Next(0, 6);
-            int walkTime = 0;
-
-            Graphics.PrintTitleCard();
-            Console.WriteLine("                                            (  N  )");
-            Console.WriteLine("What direction would you like to travel in? (W + E)");
-            Console.WriteLine("                                            (  S  )");
-            Text.Color("(North, West, Forward, Left, etc.)", Text.TC.g);
-
-            Text.Print("");
-            Text.SetTextColor();
-            string direction = Console.ReadLine();
-
-            Graphics.PrintTitleCard();
-            Text.Timed("You traveled " + direction + "!", 25, Text.TC.B);
-            Text.Continue();
-
-            switch (num)
+            while (true)
             {
-                case 0:
-                case 1: // ENCOUNTER ENEMY
-                    EnemyManager.encounterEnemy();
-                    Console.ResetColor();
-                    break;
-                case 2: // ENCOUNTER ITEM
-                    Graphics.PrintTitleCard();
+                Random rand = new Random();
+                int num = rand.Next(0, 6);
+                int walkTime = 0;
 
-                    int itemType = rand.Next(0, Game.player.stageItemsAvailable.Count());
+                Graphics.PrintTitleCard();
+                Graphics.PrintCompass();
+                Console.WriteLine("What direction would you like to travel in?");
+                Text.Instructions("Type 'cancel' to go back");
 
-                    Console.WriteLine("What luck! You encountered an item!");
-                    Text.Continue();
+                Text.Print("");
+                Text.SetTextColor();
+                string direction = Console.ReadLine();
 
-                    pickUp(Game.player.stageItemsAvailable.ElementAt(itemType));
-                    Text.Continue();
+                if (direction.ToLower() == "cancel")
+                {
                     break;
-                case 3:
-                case 4:
-                case 5: // WALK AND MAYBE REST
-                    exploreRest(previousDist, walkTime);
-                    break;
+                }
+
+                Graphics.PrintTitleCard();
+                Text.Timed("You traveled " + direction + "!", 25, Text.TC.B);
+                Text.Continue();
+
+                switch (num)
+                {
+                    case 0:
+                    case 1: // ENCOUNTER ENEMY
+                        EnemyManager.encounterEnemy();
+                        Console.ResetColor();
+                        break;
+                    case 2: // ENCOUNTER ITEM
+                        Graphics.PrintTitleCard();
+
+                        int itemType = rand.Next(0, Game.player.stageItemsAvailable.Count());
+
+                        Console.WriteLine("What luck! You encountered an item!");
+                        Text.Continue();
+
+                        pickUp(Game.player.stageItemsAvailable.ElementAt(itemType));
+                        Text.Continue();
+                        break;
+                    case 3:
+                    case 4:
+                    case 5: // WALK AND MAYBE REST
+                        exploreRest(previousDist, walkTime);
+                        break;
+                }
             }
         }
 
@@ -447,17 +453,18 @@ namespace BattleBlade_SteelLegacy.Classes
             {
                 Graphics.PrintTitleCard();
                 Console.WriteLine(item.name);
-                Console.WriteLine("Equipped: " + weapon.equipped);
-                Console.WriteLine("Energy Consumption: " + weapon.energyConsumption);
-                Console.WriteLine("Base Damage: " + weapon.wepDmg);
-                Console.WriteLine("Damage with Skill Proficiencies: " + (weapon.wepDmg + Game.player.pm.wepDamageWithWeaponScaling(weapon)).ToString());
-                Console.Write("Current weapon damage: ");
+                Console.WriteLine(String.Format("{0,-35}", "Equipped: ") + weapon.equipped);
+                Console.WriteLine(String.Format("{0,-35}", "Energy Consumption: ") +  weapon.energyConsumption);
+                Console.WriteLine(String.Format("{0,-35}", "Base Damage: ") + weapon.wepDmg);
+                Console.WriteLine(String.Format("{0,-35}", "Damage with Skill Proficiencies: ") + (weapon.wepDmg + Game.player.pm.wepDamageWithWeaponScaling(weapon)).ToString());
+                Console.Write(String.Format("{0,-35}", "Equipped weapon damage: "));
                 Text.SetTextColor(Text.TC.C);
                 Console.WriteLine((Game.player.currentWeapon.wepDmg + Game.player.pm.wepDamageWithWeaponScaling(Game.player.currentWeapon)).ToString());
                 Text.SetTextColor();
-                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 
                 //MIN STATS
+                Text.Color("Minimum Required Stats:");
                 foreach (KeyValuePair<Stat.StatName, int> kvp in weapon.minStats)
                 {
                     if (Game.player.role.getStat(kvp.Key) >= kvp.Value)
@@ -466,18 +473,19 @@ namespace BattleBlade_SteelLegacy.Classes
                     }
                     else
                     {
-                        Text.SetTextColor();
+                        Text.SetTextColor(Text.TC.r);
                     }
-                    Console.WriteLine(String.Format("{0,-25}", "Minimum " + kvp.Key + ": ") + String.Format("{0,10}", kvp.Value));
+                    Console.WriteLine(String.Format("{0,-35}", kvp.Key + ": ") + kvp.Value);
                     Text.SetTextColor();
                 }
 
                 Console.Write("\n");
 
                 //SCALE STATS
+                Text.Color("Stat Modifiers:");
                 foreach (KeyValuePair<Stat.StatName, int> kvp in weapon.sclStats)
                 {
-                    Console.WriteLine(String.Format("{0,-25}", kvp.Key + " Scaling: ") + String.Format("{0,10}", kvp.Value));
+                    Console.WriteLine(String.Format("{0,-35}", kvp.Key + ": ") + kvp.Value);
                 }
                 Text.Continue();
             }
@@ -489,14 +497,15 @@ namespace BattleBlade_SteelLegacy.Classes
             {
                 Graphics.PrintTitleCard();
                 Console.WriteLine(armor.name);
-                Console.WriteLine("Equipped: " + armor.equipped);
-                Console.WriteLine("Armor Rating: " + armor.AR);
-                Console.Write("Current Armor Rating: ");
+                Console.WriteLine(String.Format("{0,-35}", "Equipped: ") + armor.equipped);
+                Console.WriteLine(String.Format("{0,-35}", "Armor Rating: ") + armor.AR);
+                Console.Write(String.Format("{0,-35}", "Equipped Armor Rating: "));
                 Text.SetTextColor(Text.TC.C);
                 Console.WriteLine(Game.player.currentArmor.AR.ToString());
                 Text.SetTextColor();
-                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
                 //MIN STATS
+                Text.Color("Minimum Required Stats:");
                 foreach (KeyValuePair<Stat.StatName, int> kvp in armor.minStats)
                 {
                     if (Game.player.role.getStat(kvp.Key) >= kvp.Value)
@@ -505,18 +514,10 @@ namespace BattleBlade_SteelLegacy.Classes
                     }
                     else
                     {
-                        Text.SetTextColor();
+                        Text.SetTextColor(Text.TC.r);
                     }
-                    Console.WriteLine(String.Format("{0,-25}", "Minimum " + kvp.Key + ": ") + String.Format("{0,10}", kvp.Value));
+                    Console.WriteLine(String.Format("{0,-35}", kvp.Key + ": ") + kvp.Value);
                     Text.SetTextColor();
-                }
-
-                Console.Write("\n");
-
-                //SCALE STATS
-                foreach (KeyValuePair<Stat.StatName, int> kvp in armor.sclStats)
-                {
-                    Console.WriteLine(String.Format("{0,-25}", kvp.Key + " Scaling: ") + String.Format("{0,10}", kvp.Value));
                 }
                 Text.Continue();
             }

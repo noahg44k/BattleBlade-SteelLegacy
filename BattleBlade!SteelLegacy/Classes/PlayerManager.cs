@@ -58,9 +58,13 @@ namespace BattleBlade_SteelLegacy.Classes
         /// <param name="p">Player</param>
         public void addFavor(Player p)
         {
-            p.role.raiseStat(Stat.StatName.Faith);
-            Text.Timed("Your favor with " + p.role.god + " has increased by one!", 10, Text.TC.M);
-            Text.Continue();
+            //raise the favor stat but do not announce it
+            if (Game.player.role.getStat(Stat.StatName.Favor) < 20)
+            {
+                p.role.raiseStat(Stat.StatName.Favor, false);
+                Text.Timed("Your favor with " + p.role.god + " has increased by one!", 10, Text.TC.M);
+                Text.Continue();
+            }
         }
 
         public void increaseStat()
@@ -72,7 +76,7 @@ namespace BattleBlade_SteelLegacy.Classes
 
                 DisplayStatOptions();
 
-                string choice = Console.ReadLine().ToLower();
+                string choice = Game.GetPlayerInput();
 
                 if (choice.Contains("1") || choice.Contains("str"))
                 {
@@ -118,7 +122,6 @@ namespace BattleBlade_SteelLegacy.Classes
                 Text.Color($"{num}. {kvp.Key}: {kvp.Value}", Text.TC.g);
                 num++;
             }
-            Text.Print("\n");
         }
         private void increaseStatWithConfirmation(Stat.StatName statName)
         {
@@ -174,14 +177,9 @@ namespace BattleBlade_SteelLegacy.Classes
             Map.Stage beforeStage = Game.map.getStage();
             Game.map.checkStage();
 
-            if (beforeStage != Game.map.getStage())
-            {
-                Console.WriteLine("\nCongratulations! You entered the " + Game.map.getStage() + " stage!");
-                Text.Continue();
-            }
-
             Text.SetTextColor();
             Game.player.health = Game.player.maxHealth;
+            SaveData.Save();
         }
         public void takeDamage(float damage)
         {
@@ -189,14 +187,14 @@ namespace BattleBlade_SteelLegacy.Classes
             float damageTaken = damage * (1 - (Game.player.AR * 0.01f));
             if (damageTaken < 0)
             {
-                Console.WriteLine("You took 0 pts of damage!");
+                Text.Color("You took 0 pts of damage!");
                 Text.Continue();
                 damageTaken = 0;
             }
             else
             {
                 Game.player.health -= damageTaken;
-                Console.WriteLine("You took " + damageTaken.ToString("0.00") + " pts of damage!");
+                Text.Color($"You took {Math.Round(damageTaken, 2)} pts of damage!");
                 Text.Continue();
                 damageTaken = 0;
             }
@@ -294,8 +292,7 @@ namespace BattleBlade_SteelLegacy.Classes
             Console.WriteLine("Inventory: ");
             Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             string title = string.Format("{0,-35}{1,-35}{2,-35}\n", "Weapons", "Armor", "Heals");
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine(title);
+            Text.Color(title, Text.TC.g);
             Text.SetTextColor();
             string inv = "";
             for (int i = 0; i < sortedList[0].Count; i++) // MADE A SORTED LIST SO I COULD GET THE COUNT OF ALL ITEMS COLLECTIVELY
@@ -365,6 +362,7 @@ namespace BattleBlade_SteelLegacy.Classes
         }
         public void printStats()
         {
+            string format = "{0, -25}";
             string choice = "";
             string[] leftStats = new string[8];
             string[] rightStats = new string[8];
@@ -372,22 +370,22 @@ namespace BattleBlade_SteelLegacy.Classes
             {
                 Graphics.PrintTitleCard();
                 string roleName = Game.player.role.roleName.ToString();
-                string healthStr = "HP: " + Game.player.health.ToString("0.0");
-                string maxHealthStr = "Max HP: " + Game.player.maxHealth.ToString("0.0");
-                string xpStr = "XP: " + Game.player.xp.ToString("0.0");
-                string nxtLvl = "XP until next level: " + (determineXPCap() - Game.player.xp).ToString("0.0");
-                string lvlStr = "Level: " + Game.player.lvl;
-                string distWalkedStr = "Distance Walked: " + Game.player.distWalked.ToString();
-                string curStageStr = "Current Stage: " + Game.map.getStage().ToString();
-                string armorStr = "Armor Rating: " + Game.player.AR.ToString();
-                string faithStr = "Faith: " + Game.player.role.getStat(Stat.StatName.Faith);
-                string favorStr = "Favor: " + Game.player.role.getStat(Stat.StatName.Favor);
-                string strength = "Strength: " + Game.player.role.getStat(Stat.StatName.Strength);
-                string luck = "Luck: " + Game.player.role.getStat(Stat.StatName.Luck);
-                string vigor = "Vigor: " + Game.player.role.getStat(Stat.StatName.Vigor);
-                string speed = "Speed: " + Game.player.role.getStat(Stat.StatName.Speed);
-                string intelligence = "Intelligence: " + Game.player.role.getStat(Stat.StatName.Intelligence);
-                string precision = "Precision: " + Game.player.role.getStat(Stat.StatName.Precision);
+                string healthStr = String.Format(format, "HP: ") + Math.Round(Game.player.health, 2);
+                string maxHealthStr = String.Format(format, "Max HP: ") + Math.Round(Game.player.maxHealth, 2);
+                string xpStr = String.Format(format, "XP: ") + Game.player.xp.ToString("0.0");
+                string nxtLvl = String.Format(format, "XP until next level: ") + (determineXPCap() - Game.player.xp).ToString("0.0");
+                string lvlStr = String.Format(format, "Level: ") + Game.player.lvl;
+                string distWalkedStr = String.Format(format, "Distance Walked: ") + Game.player.distWalked.ToString();
+                string curStageStr = String.Format(format, "Current Stage: ") + Game.map.getStage().ToString();
+                string armorStr = String.Format(format, "Armor Rating: ") + Game.player.AR.ToString();
+                string faithStr = String.Format(format, "Faith: ") + Game.player.role.getStat(Stat.StatName.Faith);
+                string favorStr = String.Format(format, "Favor: ") + Game.player.role.getStat(Stat.StatName.Favor);
+                string strength = String.Format(format, "Strength: ") + Game.player.role.getStat(Stat.StatName.Strength);
+                string luck = String.Format(format, "Luck: ") + Game.player.role.getStat(Stat.StatName.Luck);
+                string vigor = String.Format(format, "Vigor: ") + Game.player.role.getStat(Stat.StatName.Vigor);
+                string speed = String.Format(format, "Speed: ") + Game.player.role.getStat(Stat.StatName.Speed);
+                string intelligence = String.Format(format, "Intelligence: ") + Game.player.role.getStat(Stat.StatName.Intelligence);
+                string precision = String.Format(format, "Precision: ") + Game.player.role.getStat(Stat.StatName.Precision);
 
                 leftStats[0] = healthStr;
                 leftStats[1] = xpStr;
@@ -414,8 +412,8 @@ namespace BattleBlade_SteelLegacy.Classes
                 Console.WriteLine("Class: " + roleName);
                 for (int i = 0; i < leftStats.Length; i++)
                 {
-                    leftStats[i] = String.Format("{0,-58}", leftStats[i]);
-                    rightStats[i] = String.Format("{0,-20}", rightStats[i]);
+                    leftStats[i] = String.Format("{0,-50}", leftStats[i]);
+                    rightStats[i] = rightStats[i];
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
                     Console.WriteLine(leftStats[i] + rightStats[i]);
                 }

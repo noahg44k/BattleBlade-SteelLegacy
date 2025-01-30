@@ -243,10 +243,10 @@ namespace BattleBlade_SteelLegacy.Classes
                     SaveData.Save();
                     Graphics.PrintTitleCard();
                     Text.Color(Game.player.name, Text.TC.G);
-                    Text.Color($"HP: {Game.player.health.ToString("0.00")}\n", Text.TC.g);
+                    Text.Color($"HP: {Math.Round(Game.player.health, 2)}\n", Text.TC.g);
                     Text.Color(currentEnemy.name, Text.TC.M);
-                    Text.Color($"Enemy HP: {currentEnemy.health.ToString("0.00")}", Text.TC.m);
-                    Text.Color($"Enemy dmg: {currentEnemy.dmg.ToString("0.00")}", Text.TC.m);
+                    Text.Color($"Enemy HP: {Math.Round(currentEnemy.health, 2)}", Text.TC.m);
+                    Text.Color($"Enemy dmg: {Math.Round(currentEnemy.dmg, 2)}", Text.TC.m);
                     Text.Color("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", Text.TC.W);
 
                     //WHAT WOULD U LIKE TO DO vvvv
@@ -265,7 +265,7 @@ namespace BattleBlade_SteelLegacy.Classes
                         Clock.increaseTime(1);
                     }
                     //ITEM vvvv
-                    else if (choice.Contains("item") || choice.Contains("2"))
+                    else if (choice.Contains("item") || choice.Contains("2") || choice.Contains("use") || choice.Contains("eq"))
                     {
                         Game.player.am.useItem();
                         Clock.increaseTime(1);
@@ -299,7 +299,6 @@ namespace BattleBlade_SteelLegacy.Classes
                 //ENEMY ATTACK vvvv
                 if (playerCompletedAction && currentEnemy.health > 0)
                 {
-                    Text.Instructions("Attacking");
                     AttackController.EnemyAttack();
                     Clock.increaseTime(1);
                 }
@@ -320,6 +319,7 @@ namespace BattleBlade_SteelLegacy.Classes
                 Game.player.am.pickUp(Game.player.stageItemsAvailable.ElementAt(itemType));
                 Text.Continue();
             }
+            SaveData.Save();
         }
     }
 }

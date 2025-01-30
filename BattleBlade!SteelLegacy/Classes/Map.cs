@@ -25,6 +25,63 @@ namespace BattleBlade_SteelLegacy.Classes
         public void setStage(Stage newStage)
         {
             currentStage = newStage;
+
+            if (currentStage == Stage.first)
+            {
+                //SETTING STAGE ENEMIES
+                EnemyManager.stageEnemies.Clear();
+                EnemyManager.AddAllEnemiesInStage(1);
+
+                //SETTING STAGE ITEMS
+                Game.player.stageItemsAvailable.Clear();
+                ItemManager.AddAllItemsInStage(1);
+                Game.player.stageItemsAvailable.Add(ItemManager.getItem("health potion"));
+            }
+            else if (currentStage == Stage.second)
+            {
+                EnemyManager.stageEnemies.Clear();
+                EnemyManager.AddAllEnemiesInStage(2);
+
+                Game.player.stageItemsAvailable.Clear();
+                ItemManager.AddAllItemsInStage(2);
+                ItemManager.AddAllItemsInStage(7);
+            }
+            else if (currentStage == Stage.third)
+            {
+                EnemyManager.stageEnemies.Clear();
+                EnemyManager.AddAllEnemiesInStage(3);
+
+                Game.player.stageItemsAvailable.Clear();
+                ItemManager.AddAllItemsInStage(3);
+                ItemManager.AddAllItemsInStage(7);
+            }
+            else if (currentStage == Stage.fourth)
+            {
+                EnemyManager.stageEnemies.Clear();
+                EnemyManager.AddAllEnemiesInStage(4);
+
+                Game.player.stageItemsAvailable.Clear();
+                ItemManager.AddAllItemsInStage(4);
+                ItemManager.AddAllItemsInStage(7);
+            }
+            else if (currentStage == Stage.fifth)
+            {
+                EnemyManager.stageEnemies.Clear();
+                EnemyManager.AddAllEnemiesInStage(5);
+
+                Game.player.stageItemsAvailable.Clear();
+                ItemManager.AddAllItemsInStage(5);
+                ItemManager.AddAllItemsInStage(7);
+            }
+            else if (currentStage == Stage.last)
+            {
+                EnemyManager.stageEnemies.Clear();
+                EnemyManager.AddAllEnemiesInStage(6);
+
+                Game.player.stageItemsAvailable.Clear();
+                ItemManager.AddAllItemsInStage(6);
+                ItemManager.AddAllItemsInStage(7);
+            }
         }
         public void nextStage()
         {
@@ -47,7 +104,8 @@ namespace BattleBlade_SteelLegacy.Classes
                 Graphics.PrintTitleCard();
                 if (getStage() != Stage.last)
                 {
-                    Text.Color($"Would you like to progress to the {currentStage} stage?", Text.TC.c);
+                    Text.Color($"Would you like to progress to the {getNextStage()} stage?", Text.TC.c);
+                    Text.Color("This cannot be undone", Text.TC.r);
                     Text.Instructions("y or n");
                     string choice = Game.GetPlayerInput();
 
@@ -130,62 +188,6 @@ namespace BattleBlade_SteelLegacy.Classes
                 default:
                     setStage(Stage.last);
                     break;
-            }
-            if (currentStage == Stage.first)
-            {
-                //SETTING STAGE ENEMIES
-                EnemyManager.stageEnemies.Clear();
-                EnemyManager.AddAllEnemiesInStage(1);
-
-                //SETTING STAGE ITEMS
-                Game.player.stageItemsAvailable.Clear();
-                ItemManager.AddAllItemsInStage(1);
-                Game.player.stageItemsAvailable.Add(ItemManager.getItem("health potion"));
-            }
-            else if (currentStage == Stage.second)
-            {
-                EnemyManager.stageEnemies.Clear();
-                EnemyManager.AddAllEnemiesInStage(2);
-
-                Game.player.stageItemsAvailable.Clear();
-                ItemManager.AddAllItemsInStage(2);
-                ItemManager.AddAllItemsInStage(7);
-            }
-            else if (currentStage == Stage.third)
-            {
-                EnemyManager.stageEnemies.Clear();
-                EnemyManager.AddAllEnemiesInStage(3);
-
-                Game.player.stageItemsAvailable.Clear();
-                ItemManager.AddAllItemsInStage(3);
-                ItemManager.AddAllItemsInStage(7);
-            }
-            else if (currentStage == Stage.fourth)
-            {
-                EnemyManager.stageEnemies.Clear();
-                EnemyManager.AddAllEnemiesInStage(4);
-
-                Game.player.stageItemsAvailable.Clear();
-                ItemManager.AddAllItemsInStage(4);
-                ItemManager.AddAllItemsInStage(7);
-            }
-            else if (currentStage == Stage.fifth)
-            {
-                EnemyManager.stageEnemies.Clear();
-                EnemyManager.AddAllEnemiesInStage(5);
-
-                Game.player.stageItemsAvailable.Clear();
-                ItemManager.AddAllItemsInStage(5);
-                ItemManager.AddAllItemsInStage(7);
-            }
-            else if (currentStage == Stage.last)
-            {
-                EnemyManager.stageEnemies.Clear();
-                EnemyManager.AddAllEnemiesInStage(6);
-
-                Game.player.stageItemsAvailable.Clear();
-                ItemManager.AddAllItemsInStage(6);
-                ItemManager.AddAllItemsInStage(7);
             }
         }
     }

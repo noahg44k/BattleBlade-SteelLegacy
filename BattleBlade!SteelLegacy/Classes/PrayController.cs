@@ -128,9 +128,18 @@ namespace BattleBlade_SteelLegacy.Classes
                 }
                 if(selectedItem != null)
                 {
-                    p.inventory.Remove(selectedItem);
-                    p.pm.addFavor(p);
-                    return;
+                    if(Game.player.role.getStat(Stat.StatName.Favor) < 20)
+                    {
+                        p.inventory.Remove(selectedItem);
+                        p.pm.addFavor(p);
+                        return;
+                    }
+                    else
+                    {
+                        Text.Error("Your Favor is at its maximum!");
+                        Text.Continue();
+                        return;
+                    }
                 }
                 if(input == String.Empty)
                 {
@@ -147,7 +156,7 @@ namespace BattleBlade_SteelLegacy.Classes
             {
                 Graphics.PrintTitleCard();
                 Random r = new Random();
-                double luckChance = r.NextDouble() + (Convert.ToDouble(p.role.getStat(Stat.StatName.Faith))) / 50;
+                double luckChance = r.NextDouble() + Convert.ToDouble(p.role.getStat(Stat.StatName.Favor)) / 60;
                 if (p.luckWalkCounter <= 0)
                 {
                     if (luckChance >= 0.90)

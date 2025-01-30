@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Reflection;
 using System.IO;
 using static System.Net.Mime.MediaTypeNames;
+using System.Diagnostics;
 
 namespace BattleBlade_SteelLegacy.Classes
 {
@@ -63,6 +64,7 @@ namespace BattleBlade_SteelLegacy.Classes
                     try
                     {
                         SaveData.Load();
+                        Graphics.WelcomeBackMessage();
                         return;
                     }
                     catch (FileNotFoundException)
@@ -241,7 +243,7 @@ namespace BattleBlade_SteelLegacy.Classes
             {
                 Text.Print("");
                 Text.SetTextColor();
-                return Console.ReadLine()?.ToLower();
+                return Console.ReadLine()?.ToLower(); ;
             }
             catch
             {
@@ -264,7 +266,7 @@ namespace BattleBlade_SteelLegacy.Classes
         {
             switch (option)
             {
-                case string a when a.Contains("explore") || option == "1":
+                case string a when a.Contains("exp") || option == "1":
                     player.am.explore();
                     break;
 
@@ -272,20 +274,23 @@ namespace BattleBlade_SteelLegacy.Classes
                     player.am.rest();
                     break;
 
-                case string a when a.Contains("pray") || option == "3":
+                case string a when a.Contains("pr") || option == "3":
                     player.am.pray();
                     break;
 
-                case string a when a.Contains("use") || a.Contains("equip") || a.Contains("item") || option == "4":
+                case string a when a.Contains("us") || a.Contains("eq") || a.Contains("item") || option == "4":
                     player.am.useItem();
                     break;
 
-                case string a when a.Contains("player") || a.Contains("inspect") || option == "5":
+                case string a when a.Contains("pla") || a.Contains("ins") || option == "5":
                     player.pm.printStats();
                     break;
 
-                case string a when a.Contains("quit") || option == "6":
+                case string a when a.Contains("q") || option == "6":
                     ProcessQuitOption();
+                    break;
+                case string a when a.Contains("debug"):
+                    debug();
                     break;
 
                 default:
@@ -304,7 +309,10 @@ namespace BattleBlade_SteelLegacy.Classes
 
                 if (choice == "y")
                 {
-                    Text.Color($"\nI bid you farewell, {player.name}.", Text.TC.W);
+                    Graphics.PrintTitleCard();
+                    Text.Timed($"I bid you farewell,", Text.TC.W, 40);
+                    Text.Timed($"{player.name}~", Text.TC.r, 160);
+                    Text.SetTextColor(Text.TC.g);
                     Environment.Exit(0);
                 }
                 else if (choice == "n")
@@ -316,6 +324,33 @@ namespace BattleBlade_SteelLegacy.Classes
                     Text.InvalidInput();
                 }
             }
+        }
+        //debug screen for me
+        private static void debug()
+        {
+            Text.Color("Enemies in stage: ");
+            foreach (Enemy enemy in EnemyManager.stageEnemies)
+            {
+                Text.Color($"{enemy.name} {enemy.stage}", Text.TC.e);
+            }
+            Text.Print("");
+
+            Text.Color("Inventory: ");
+            foreach (Item item in player.inventory)
+            {
+                Text.Color($"{item.name}: {item.currentStack}", Text.TC.g);
+                if (item.use == Item.Use.Wear)
+                {
+                    Armor a = item as Armor;
+                    Text.Color($"Equipped: {a.equipped}", Text.TC.B);
+                }
+                else if (item.use == Item.Use.Hold)
+                {
+                    Weapon w = item as Weapon;
+                    Text.Color($"Equipped: {w.equipped}", Text.TC.b);
+                }
+            }
+            Text.Continue();
         }
     }
 }
